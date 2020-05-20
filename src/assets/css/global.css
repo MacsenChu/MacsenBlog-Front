@@ -1,0 +1,43 @@
+/* 全局样式表 */
+html, body, #app {
+    /*height: 100%;*/
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 2em!important;
+}
+
+h2 {
+    font-size: 1.5em!important;
+}
+
+h3 {
+    font-size: 1.17em!important;
+}
+
+
+
+/* el-drawer组件弹出的遮罩样式，本来这个组件是有遮罩效果的，但我也不知道她被什么东西弄没了，自己写一下吧……*/
+.v-modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .5;
+    background: #000;
+}
+
+
+/* el-scrollbar组件根据屏幕长度自动隐藏或显示滚动条 */
+.page-component__scroll{
+    height: 100%;
+}
+
+.page-component__scroll .el-scrollbar__wrap {
+    overflow-x: auto;
+}
+
