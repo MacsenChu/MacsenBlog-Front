@@ -35,7 +35,16 @@ export default {
   },
   data () {
     return {
-      footerInfo: {},
+      footerInfo: {
+        id: 1,
+        visits_count: '8888',
+        visitors_count: '6666',
+        runtime: '2020-05-20T05:21:00',
+        recordNumber: '88888888',
+        recordName: 'Macsen Chu',
+        copyrightYear: new Date().getFullYear(),
+        copyrightName: 'Macsen'
+      },
       diffDate: {},
       TIME_CONSTANT: {
         MILLISECOND: 1000,
@@ -58,8 +67,12 @@ export default {
   },
   methods: {
     async getFooterInfo () {
-      const { data } = await this.$http.get('footer')
-      this.footerInfo = data
+      try {
+        const { data } = await this.$http.get('footer')
+        this.footerInfo = data
+      } catch (e) {
+        console.log(e)
+      }
       setInterval(this.setTime, 1000)
     },
     setTime () {

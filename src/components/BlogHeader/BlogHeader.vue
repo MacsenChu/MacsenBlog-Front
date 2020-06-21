@@ -119,6 +119,7 @@ export default {
         background-color: var(--backgroundColor, @headerBgColor);
 
         .el-menu-item {
+          color: var(--color, @headerColor);
           i {
             color: var(--color, @headerColor);
           }

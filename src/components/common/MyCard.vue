@@ -29,7 +29,11 @@ export default {
   },
   data () {
     return {
-      myInfo: {}
+      myInfo: {
+        avatarUrl: require('../../assets/images/avatar.jpeg'),
+        name: 'Macsen Chu',
+        profile: '<p>一名菜鸟coder <br>折腾在 0 和 1 世界里的青年</p>\n<p>所有晦暗留给过往，<br>但愿预见未来的你，<br>凝冬散尽，星河长明</p>\n<p>我是Macsen<br>努力成为更优秀的自己</p>'
+      }
     }
   },
   created () {
@@ -39,8 +43,12 @@ export default {
   },
   methods: {
     async getMyInfo () {
-      const { data } = await this.$http.get('myInfo')
-      this.myInfo = data
+      try {
+        const { data } = await this.$http.get('myInfo')
+        this.myInfo = data
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }

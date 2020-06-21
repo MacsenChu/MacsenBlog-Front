@@ -1,7 +1,7 @@
 <template>
   <div>
     <swiper :options="swiperOption">
-      <swiper-slide v-for='item of swiperList' :key='item.id' :class="{ 'swiper-no-swiping': manualSwiping }">
+      <swiper-slide v-for="item of swiperList" :key="item.id" :class="{ 'swiper-no-swiping': manualSwiping }">
         <div :style="{ backgroundImage: `url(${item.imgUrl})` }" class="bgCover">
           <div class="container">
             <el-row>
@@ -12,7 +12,7 @@
             <el-row>
               <el-col :span="24">
                 <div class="signature center-align">
-                  <typed :signature='item.signature'></typed>
+                  <typed :signature="item.signature"></typed>
                 </div>
               </el-col>
             </el-row>
@@ -107,10 +107,56 @@ export default {
         }
       },
       manualSwiping: true,
-      swiperList: [{}],
+      swiperList: [
+        {
+          id: 1,
+          title: 'Macsen',
+          signature: '"你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多。"',
+          imgUrl: 'https://ae01.alicdn.com/kf/H5301b897556f4265817fadd6e14d0eebX.jpg'
+        },
+        {
+          id: 2,
+          title: 'Macsen',
+          signature: '"人的内心不种满鲜花就会长满杂草。"',
+          imgUrl: 'https://ae01.alicdn.com/kf/Hc5ae8fc95b4a48cdadd40ddb1217541eG.jpg'
+        },
+        {
+          id: 3,
+          title: 'Macsen',
+          signature: '当我走遍了1——17层地狱分毫未伤时，我走到了18层，你却对我说“欢迎来到人间”。',
+          imgUrl: 'https://ae01.alicdn.com/kf/Hee341a549bbb4bea984fcc3799ec5be1a.jpg'
+        },
+        {
+          id: 4,
+          title: 'Macsen',
+          signature: 'When I went through 1-17 layers of hell without any harm, I went to the 18th floor, but you said "welcome to the world。"',
+          imgUrl: 'https://ae01.alicdn.com/kf/H7b6fe1ff518748348867cda3f2355d744.jpg'
+        },
+        {
+          id: 5,
+          title: 'Macsen',
+          signature: '"如果我不曾见过太阳，我本可以忍受黑暗。"',
+          imgUrl: 'https://ae01.alicdn.com/kf/H69fb3e09ed8d412ab2d624eab9ae99406.jpg'
+        },
+        {
+          id: 6,
+          title: 'Macsen',
+          signature: '"我在人间凑数的日子。"',
+          imgUrl: 'https://ae01.alicdn.com/kf/H70d14d64db7c481ba4a79eebf1f6584bN.jpg'
+        }
+      ],
       limit: 10,
       offset: 0,
-      articleList: [],
+      articleList: [{
+        id: 1,
+        title: 'Something went wrong...Please send an email to MacsenChu@gmail.com Contact me',
+        cover: require('../assets/images/500.png'),
+        author: 'Macsen',
+        avatar: require('../assets/images/avatar.jpeg'),
+        createTime: new Date(),
+        likes: '0',
+        comments: '0'
+      }],
       loading: false,
       screenHeight: document.documentElement.clientHeight,
       sticky: {
@@ -120,8 +166,8 @@ export default {
     }
   },
   created () {
-    this.getArticleList(this.offset)
     this.getSwiperList()
+    this.getArticleList(this.offset)
   },
   mounted () {
     new WOW({
@@ -138,12 +184,21 @@ export default {
   },
   methods: {
     async getSwiperList () {
-      const { data } = await this.$http.get('swiperList')
-      this.swiperList = data
+      try {
+        const { data } = await this.$http.get('swiperList')
+        this.swiperList = data
+      } catch (e) {
+        console.log(e)
+      }
     },
     async getArticleList (offset) {
-      const { data } = await this.$http.get(`articleList?limit=${this.limit}&offset=${offset * this.limit}`)
-      this.articleList.push.apply(this.articleList, data)
+      try {
+        const { data } = await this.$http.get(`articleList?limit=${this.limit}&offset=${offset * this.limit}`)
+        this.articleList.length = 0
+        this.articleList.push.apply(this.articleList, data)
+      } catch (e) {
+        console.log(e)
+      }
       // 之前我是用myCard渲染完之后，触发父组件的函数，设置sticktop
       // 用后端测试时，我自己手动创建pojo类的list，没有问题，但是换成数据库查的时候，元素高度永远会大那么一些
       // 那么问题一定在这里，所以换掉之前的方式，在第一次获取文章列表的时候，此时获取到的元素高度正常
@@ -156,11 +211,15 @@ export default {
     },
     async loadMore () {
       this.loading = true
-      const { data } = await this.$http.get(`articleList?limit=${this.limit}&offset=${++this.offset * this.limit}`)
-      if (data.length !== 0) {
-        this.articleList.push.apply(this.articleList, data)
-        this.loading = false
-      } else {
+      try {
+        const { data } = await this.$http.get(`articleList?limit=${this.limit}&offset=${++this.offset * this.limit}`)
+        if (data.length !== 0) {
+          this.articleList.push.apply(this.articleList, data)
+          this.loading = false
+        } else {
+          this.loading = true
+        }
+      } catch (e) {
         this.loading = true
       }
     },
@@ -181,8 +240,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-  @import "./src/assets/css/variables";
+<style lang='less' scoped>
+  @import './src/assets/css/variables';
   div {
     .swiper-container {
       .swiper-slide {
@@ -197,8 +256,8 @@ export default {
           align-items: center;
 
           &:after {
-            -webkit-animation: rainbow 60s infinite;
-            animation: rainbow 150s infinite;
+            -webkit-animation: rainbow 90s infinite;
+            animation: rainbow 90s infinite;
           }
 
           &:before,
@@ -210,7 +269,7 @@ export default {
             display: block;
             left: 0;
             top: 0;
-            content: "";
+            content: '';
           }
 
           .container {

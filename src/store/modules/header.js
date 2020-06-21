@@ -41,7 +41,17 @@ export default {
         icon: 'icon-search'
       }
     ],
-    headerInfo: {},
+    headerInfo: {
+      title: 'Macsen‘s Blog',
+      sign: '“你会找到别的星星，可我只心动一个月亮”',
+      headerBgColor: '#354b60',
+      headerColor: '#F5F5F5',
+      headerActiveColor: 'rgba(0, 0, 0, 0.16)',
+      sideBarBgColor: '#335B80',
+      sideBarColor: '#354b60',
+      sideBarActiveColor: 'rgba(0, 0, 0, 0.06)',
+      avatarUrl: require('../../assets/images/avatar.jpeg')
+    },
     drawer: false
   },
   mutations: {
@@ -59,10 +69,12 @@ export default {
   },
   actions: {
     async getHeaderInfo (context) {
-      // const headerInfo = await this.$http.get('headerInfo')
-      const { data } = await axios.get('headerInfo')
-      // console.log(data)
-      context.commit('initHeaderInfo', data)
+      try {
+        const { data } = await axios.get('headerInfo')
+        context.commit('initHeaderInfo', data)
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }

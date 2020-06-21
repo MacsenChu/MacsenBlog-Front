@@ -24,7 +24,32 @@ export default {
   },
   data () {
     return {
-      carouselList: []
+      carouselList: [
+        {
+          id: 1,
+          url: require('../../assets/images/carousel1.jpg'),
+          title: 'Macsen',
+          content: '你可以为一个人卑微到尘埃里，但没人会爱尘埃中的你'
+        },
+        {
+          id: 2,
+          url: require('../../assets/images/carousel2.jpg'),
+          title: 'Macsen',
+          content: '即便无人问我粥可温，无人与我立黄昏，仍等你契合灵魂，赠与无限温存'
+        },
+        {
+          id: 3,
+          url: require('../../assets/images/carousel3.png'),
+          title: 'Macsen',
+          content: '且听风吟，静待花开'
+        },
+        {
+          id: 4,
+          url: require('../../assets/images/carousel4.jpg'),
+          title: 'Macsen',
+          content: '念念不忘，必有回响。若无回响，必有一伤'
+        }
+      ]
     }
   },
   created () {
@@ -32,8 +57,12 @@ export default {
   },
   methods: {
     async getCarouselList () {
-      const { data } = await this.$http.get('carouselList')
-      this.carouselList = data
+      try {
+        const { data } = await this.$http.get('carouselList')
+        this.carouselList = data
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }

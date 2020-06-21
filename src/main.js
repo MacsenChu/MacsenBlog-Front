@@ -31,6 +31,7 @@ import 'wowjs/css/libs/animate.css'
 import axios from 'axios'
 // 配置请求的根路径
 axios.defaults.baseURL = 'http://192.168.0.104:8001/api/'
+// axios.defaults.baseURL = 'http://39.106.111.206:8001/api/'
 // 在 request 拦截器中，展示进度条 Nprogress.start()
 axios.interceptors.request.use(config => {
   Nprogress.start()

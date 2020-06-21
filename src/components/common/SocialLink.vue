@@ -51,10 +51,23 @@ export default {
     return {
       // 三层数据会报错
       socialLink: {
-        github: {},
-        mail: {},
-        qq: {},
-        weChat: {}
+        github: {
+          url: 'https://github.com/MacseChu',
+          message: '访问我的github'
+        },
+        mail: {
+          url: 'mailto:7434311@qq.com',
+          message: '邮件联系我'
+        },
+        qq: {
+          url: 'tencent://message/?uin=7434311&Site=&menu=yes',
+          quick_response_code: require('../../assets/images/qq.jpg'),
+          message: 'QQ:7434311'
+        },
+        weChat: {
+          quick_response_code: require('../../assets/images/WeChat.jpg'),
+          message: '微信联系我'
+        }
       }
     }
   },
