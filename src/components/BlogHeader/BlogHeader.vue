@@ -1,9 +1,9 @@
 <template>
-  <div class="z-depth-3" :style="colorProps">
+  <div :class="['z-depth-3', isTop ? 'nav-transparent': '' ]" :style="colorProps" id="headNav">
     <header id="header">
-      <h1 class="logo waves-effect waves-light">{{ title }}</h1>
-      <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" :text-color="headerColor"
-               :active-text-color="headerColor" router>
+      <h1 class="logo waves-effect waves-light">{{ headerInfo.title }}</h1>
+      <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" :text-color="headerInfo.headerColor"
+               :active-text-color="headerInfo.headerColor" :class="isTop ? 'nav-transparent': ''"  router>
         <el-menu-item :index="tab.path" v-for="tab in tabs" :key="tab.id" class="waves-effect waves-light">
           <i :class="['iconfont', tab.icon]"></i>
           {{ tab.name }}
@@ -14,7 +14,7 @@
       <span class="waves-effect waves-light" @click="showSideBar">
         <i class="iconfont icon-nav-list"></i>
       </span>
-      <h2 class="logo waves-effect waves-light">{{ title }}</h2>
+      <h2 class="logo waves-effect waves-light">{{ headerInfo.title }}</h2>
       <span class="waves-effect waves-light">
         <i class="iconfont icon-search1" style="font-size:26px"></i>
       </span>
@@ -28,34 +28,51 @@ export default {
   name: 'blog-header',
   data () {
     return {
-      direction: 'ltr'
+      isTop: true
     }
+  },
+  mounted () {
+    // 滚动页面改变导航栏颜色，在mounted钩子window添加一个滚动滚动监听事件
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  beforeDestroy () {
+    // 由于是在整个window中添加的事件，所以要在页面离开时摧毁掉，否则会报错
+    window.removeEventListener('scroll', this.handleScroll)
   },
   methods: {
     ...mapMutations({
-      switchSideBar: 'header/switchSideBar'
+      switchSideBar: 'header/switchSideBar',
+      switchHeaderBgColor: 'header/switchHeaderBgColor'
     }),
     handleSelect (key, keyPath) {
       console.log(key, keyPath)
     },
     showSideBar () {
       this.switchSideBar(this.drawer)
+    },
+    // 然后在方法中，添加这个handleScroll方法来获取滚动的位置
+    handleScroll () {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      const showPosition = 100
+      // 设置背景颜色的透明读
+      if (scrollTop < showPosition) {
+        this.isTop = true
+      } else {
+        this.isTop = false
+      }
     }
   },
   computed: {
     ...mapState({
-      title: state => state.header.title,
       tabs: state => state.header.tabs,
       drawer: state => state.header.drawer,
-      headerBgColor: state => state.header.headerBgColor,
-      headerColor: state => state.header.headerColor || '#F5F5F5',
-      headerActiveColor: state => state.header.headerActiveColor
+      headerInfo: state => state.header.headerInfo
     }),
     colorProps () {
       return {
-        '--backgroundColor': this.headerBgColor,
-        '--color': this.headerColor,
-        '--activeColor': this.headerActiveColor
+        '--backgroundColor': this.headerInfo.headerBgColor,
+        '--color': this.headerInfo.headerColor,
+        '--activeColor': this.headerInfo.headerActiveColor
       }
     },
     activeIndex () {
@@ -75,7 +92,9 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-
+    &#headNav {
+      z-index: 2000;
+    }
     header {
       width: 1200px;
       display: flex;

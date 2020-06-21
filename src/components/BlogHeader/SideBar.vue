@@ -1,7 +1,7 @@
 <template>
   <el-drawer
     :visible="drawer"
-    :direction="direction"
+    direction="ltr"
     :with-header="false"
     :before-close="closeSideBar"
     size="245px"
@@ -9,12 +9,12 @@
     <el-scrollbar class="page-component__scroll">
       <el-menu
         :default-active="activeIndex"
-        :text-color="sideBarColor"
+        :text-color="headerInfo.sideBarColor"
         router>
         <div>
-          <el-avatar :size="100" :src="avatarUrl" />
-          <h2>{{ title }}</h2>
-          <p>{{ sign }}</p>
+          <el-avatar :size="100" :src="headerInfo.avatarUrl" />
+          <h2>{{ headerInfo.title }}</h2>
+          <p>{{ headerInfo.sign }}</p>
         </div>
         <el-menu-item :index="tab.path" v-for="tab in tabs" :key="tab.id">
           <i :class="['iconfont', tab.icon]" />
@@ -31,28 +31,23 @@ export default {
   name: 'side-bar',
   data () {
     return {
-      direction: 'ltr',
-      avatarUrl: 'https://pics.images.ac.cn/image/5ec25bfca9a8d.html'
     }
+  },
+  created () {
+    this.$store.dispatch('header/getHeaderInfo')
   },
   computed: {
     ...mapState({
-      title: state => state.header.title,
-      sign: state => state.header.sign,
       tabs: state => state.header.tabs,
       drawer: state => state.header.drawer,
-      headerBgColor: state => state.header.headerBgColor,
-      headerColor: state => state.header.headerColor,
-      sideBarBgColor: state => state.header.sideBarBgColor,
-      sideBarColor: state => state.header.sideBarColor,
-      sideBarActiveColor: state => state.header.sideBarActiveColor
+      headerInfo: state => state.header.headerInfo
     }),
     colorProps () {
       return {
-        '--color': this.headerColor,
-        '--sideBarBgColor': this.sideBarBgColor,
-        '--sideBarColor': this.sideBarColor,
-        '--sideBarActiveColor': this.sideBarActiveColor
+        '--color': this.headerInfo.headerColor,
+        '--sideBarBgColor': this.headerInfo.sideBarBgColor,
+        '--sideBarColor': this.headerInfo.sideBarColor,
+        '--sideBarActiveColor': this.headerInfo.sideBarActiveColor
       }
     },
     activeIndex () {
@@ -75,7 +70,7 @@ export default {
   .el-drawer {
     .el-menu {
       border: none;
-      height: 500px;
+      height: 100vh;
       div {
         width: 100%;
         height: 200px;

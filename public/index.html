@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <script type="text/javascript">
+      // scrollReveal在无限加载的时候 总会报一个Cannot read property 'bounds' of undefined
+      // 我看不明白，但是不影响使用，所以从“根源”上解决问题，直接屏蔽掉错误提示
+      // 开发的时候请注释掉！！
+      // function SlyarErrors() {
+      //   return true;
+      // }
+      // window.onerror = SlyarErrors;
+    </script>
   </head>
   <body>
     <noscript>

@@ -1,4 +1,5 @@
 
+import axios from 'axios'
 export default {
   namespaced: true,
   state: {
@@ -22,13 +23,13 @@ export default {
         icon: 'icon-archive'
       },
       {
-        id: 5,
+        id: 4,
         name: '留言板',
         path: 'message',
         icon: 'icon-comments'
       },
       {
-        id: 4,
+        id: 5,
         name: '关于',
         path: 'about',
         icon: 'icon-app_about'
@@ -40,22 +41,28 @@ export default {
         icon: 'icon-search'
       }
     ],
-    title: "Macsen's Blog",
-    sign: '"其实我孤独的像条狗"',
-    drawer: false,
-    headerBgColor: '#354b60', // 假设后台获取的颜色
-    headerColor: '#F5F5F5',
-    headerActiveColor: '#273a47',
-    sideBarBgColor: '#335B80',
-    sideBarColor: '#354b60',
-    sideBarActiveColor: 'rgba(0,0,0,0.06)'
+    headerInfo: {},
+    drawer: false
   },
   mutations: {
     // 手机状态下侧边栏的开启和关闭
     switchSideBar (state, drawer) {
       state.drawer = !drawer
+    },
+    switchHeaderBgColor (state, color) {
+      state.headerBgColor = color
+    },
+    // 初始化headerInfo
+    initHeaderInfo (state, headerInfo) {
+      state.headerInfo = headerInfo
     }
   },
   actions: {
+    async getHeaderInfo (context) {
+      // const headerInfo = await this.$http.get('headerInfo')
+      const { data } = await axios.get('headerInfo')
+      // console.log(data)
+      context.commit('initHeaderInfo', data)
+    }
   }
 }
