@@ -1,18 +1,18 @@
 <template>
   <div>
     <swiper :options="swiperOption">
-      <swiper-slide v-for="item of swiperList" :key="item.id" :class="{ 'swiper-no-swiping': manualSwiping }">
-        <div :style="{ backgroundImage: `url(${item.imgUrl})` }" class="bgCover">
+      <swiper-slide v-for="swiper of swiperList" :key="swiper.id" :class="{ 'swiper-no-swiping': manualSwiping }">
+        <div :style="{ backgroundImage: `url(${swiper.imgUrl})` }" class="bgCover">
           <div class="container">
             <el-row>
               <el-col :span="24">
-                <div class="title center-align">{{ item.title }}</div>
+                <div class="title center-align">{{ swiper.title }}</div>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="24">
                 <div class="signature center-align">
-                  <typed :signature="item.signature"></typed>
+                  <typed :signature="swiper.signature"></typed>
                 </div>
               </el-col>
             </el-row>
@@ -38,27 +38,21 @@
     </swiper>
     <div id="indexCard" ref="indexCard">
       <el-row>
-          <!-- infinite-scroll-disabled false是执行loadMore，true是不执行 -->
-          <!-- 经过我无数次的尝试infinite-scroll-distance设置为65 才会正常滚动 -->
-          <el-col :lg="18" :md="18" v-infinite-scroll="loadMore" infinite-scroll-disabled="infinite_scroll_disabled" infinite-scroll-distance="0">
-            <item-card v-for="article in articleList" :key="article.id" :article="article"></item-card>
-            <loading-card :loading="!loading"></loading-card>
-          </el-col>
-          <!-- 在父元素上加动画，子元素会一起动画着显示出来，如果给每个子元素分别加上动画，一个一个出来会很好看 -->
-          <!-- 但是无限滚动也会让这些子组件重新显示一边动画，体验非常差，这里我选择退而求其次了，希望会有一个好的解决方案 -->
-          <!-- 因为上面那个设置了65，用scrollReveal会从斜下方上来，所以改wow，但是itemCard不能用wow -->
-          <!-- 这样会导致侧边栏也会频繁跟新动画 因此本前端项目可优化度极高，我前端非常的菜 -->
-          <el-col :lg="6" :md="6" class="hidden-sm-and-down sideCard wow bounceInRight">
-            <!-- vue-sticky 让侧边这几个子元素滚动到一定的位置定住，右边无限滚动 -->
-            <div v-sticky="sticky" ref="asideStick" id="asideStick">
-             <div>
-               <my-card></my-card>
-               <carousel-card></carousel-card>
-               <footer-card></footer-card>
-             </div>
-            </div>
-          </el-col>
-        </el-row>
+        <!-- infinite-scroll-disabled false是执行loadMore，true是不执行 -->
+        <el-col v-if="articleList.length > 0" :lg="18" :md="18" v-infinite-scroll="loadMore" infinite-scroll-disabled="infinite_scroll_disabled" infinite-scroll-distance="0">
+          <item-card v-for="article in articleList" :key="article.id" :article="article"></item-card>
+          <loading-card :loading="!loading"></loading-card>
+        </el-col>
+        <!-- 这两个元素都用scrollreveal总是有那么些问题 这里选择了又引入了wow.js, 我技术太差了，这个项目的优化空间非常大 -->
+        <el-col :lg="6" :md="6" class="hidden-sm-and-down sideCard">
+          <!-- vue-sticky 让侧边这几个子元素滚动到一定的位置定住，右边无限滚动 -->
+          <div v-sticky="sticky" ref="asideStick" id="asideStick" class="wow bounceInRight">
+             <my-card></my-card>
+             <carousel-card></carousel-card>
+             <footer-card></footer-card>
+          </div>
+        </el-col>
+      </el-row>
       </div>
   </div>
 </template>
@@ -112,37 +106,37 @@ export default {
           id: 1,
           title: 'Macsen',
           signature: '"你要藏好软弱，世界大雨滂沱。万物苟且而活，无人为你背负更多。"',
-          imgUrl: 'https://ae01.alicdn.com/kf/H5301b897556f4265817fadd6e14d0eebX.jpg'
+          imgUrl: require('../assets/images/swiper1.jpg')
         },
         {
           id: 2,
           title: 'Macsen',
           signature: '"人的内心不种满鲜花就会长满杂草。"',
-          imgUrl: 'https://ae01.alicdn.com/kf/Hc5ae8fc95b4a48cdadd40ddb1217541eG.jpg'
+          imgUrl: require('../assets/images/swiper2.jpg')
         },
         {
           id: 3,
           title: 'Macsen',
           signature: '当我走遍了1——17层地狱分毫未伤时，我走到了18层，你却对我说“欢迎来到人间”。',
-          imgUrl: 'https://ae01.alicdn.com/kf/Hee341a549bbb4bea984fcc3799ec5be1a.jpg'
+          imgUrl: require('../assets/images/swiper3.jpg')
         },
         {
           id: 4,
           title: 'Macsen',
           signature: 'When I went through 1-17 layers of hell without any harm, I went to the 18th floor, but you said "welcome to the world。"',
-          imgUrl: 'https://ae01.alicdn.com/kf/H7b6fe1ff518748348867cda3f2355d744.jpg'
+          imgUrl: require('../assets/images/swiper4.jpg')
         },
         {
           id: 5,
           title: 'Macsen',
           signature: '"如果我不曾见过太阳，我本可以忍受黑暗。"',
-          imgUrl: 'https://ae01.alicdn.com/kf/H69fb3e09ed8d412ab2d624eab9ae99406.jpg'
+          imgUrl: require('../assets/images/swiper5.jpg')
         },
         {
           id: 6,
           title: 'Macsen',
           signature: '"我在人间凑数的日子。"',
-          imgUrl: 'https://ae01.alicdn.com/kf/H70d14d64db7c481ba4a79eebf1f6584bN.jpg'
+          imgUrl: require('../assets/images/swiper6.jpg')
         }
       ],
       limit: 10,
@@ -154,8 +148,8 @@ export default {
         author: 'Macsen',
         avatar: require('../assets/images/avatar.jpeg'),
         createTime: new Date(),
-        likes: '0',
-        comments: '0'
+        likesCount: 0,
+        commentsCount: 0
       }],
       loading: false,
       screenHeight: document.documentElement.clientHeight,
@@ -193,7 +187,13 @@ export default {
     },
     async getArticleList (offset) {
       try {
-        const { data } = await this.$http.get(`articleList?limit=${this.limit}&offset=${offset * this.limit}`)
+        // const { data } = await this.$http.get(`articleList?limit=${this.limit}&offset=${offset * this.limit}`)
+        const { data } = await this.$http.get('articleList', {
+          params: {
+            limit: this.limit,
+            offset: offset * this.limit
+          }
+        })
         this.articleList.length = 0
         this.articleList.push.apply(this.articleList, data)
       } catch (e) {
@@ -212,7 +212,13 @@ export default {
     async loadMore () {
       this.loading = true
       try {
-        const { data } = await this.$http.get(`articleList?limit=${this.limit}&offset=${++this.offset * this.limit}`)
+        // const { data } = await this.$http.get(`articleList?limit=${this.limit}&offset=${++this.offset * this.limit}`)
+        const { data } = await this.$http.get('articleList', {
+          params: {
+            limit: this.limit,
+            offset: ++this.offset * this.limit
+          }
+        })
         if (data.length !== 0) {
           this.articleList.push.apply(this.articleList, data)
           this.loading = false

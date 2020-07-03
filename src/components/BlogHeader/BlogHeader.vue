@@ -2,8 +2,11 @@
   <div :class="['z-depth-3', isTop ? 'nav-transparent': '' ]" :style="colorProps" id="headNav">
     <header id="header">
       <h1 class="logo waves-effect waves-light">{{ headerInfo.title }}</h1>
-      <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" :text-color="headerInfo.headerColor"
-               :active-text-color="headerInfo.headerColor" :class="isTop ? 'nav-transparent': ''"  router>
+      <el-menu :default-active="activeIndex"
+               mode="horizontal"
+               :text-color="headerInfo.headerColor"
+               :active-text-color="headerInfo.headerColor"
+               :class="isTop ? 'nav-transparent': ''"  router>
         <el-menu-item :index="tab.path" v-for="tab in tabs" :key="tab.id" class="waves-effect waves-light">
           <i :class="['iconfont', tab.icon]"></i>
           {{ tab.name }}
@@ -44,9 +47,6 @@ export default {
       switchSideBar: 'header/switchSideBar',
       switchHeaderBgColor: 'header/switchHeaderBgColor'
     }),
-    handleSelect (key, keyPath) {
-      console.log(key, keyPath)
-    },
     showSideBar () {
       this.switchSideBar(this.drawer)
     },
@@ -55,11 +55,7 @@ export default {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
       const showPosition = 100
       // 设置背景颜色的透明读
-      if (scrollTop < showPosition) {
-        this.isTop = true
-      } else {
-        this.isTop = false
-      }
+      this.isTop = scrollTop < showPosition
     }
   },
   computed: {
@@ -76,7 +72,7 @@ export default {
       }
     },
     activeIndex () {
-      return this.$route.path.substring(1, this.$route.path.length) || 'home'
+      return this.$route.path || '/home'
     }
   }
 }

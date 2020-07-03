@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 export default {
   namespaced: true,
@@ -7,37 +6,37 @@ export default {
       {
         id: 1,
         name: '首页',
-        path: 'home',
+        path: '/home',
         icon: 'icon-home'
       },
       {
         id: 2,
         name: '分类/标签',
-        path: 'categories',
+        path: '/categories',
         icon: 'icon-biaoqian'
       },
       {
         id: 3,
         name: '归档',
-        path: 'archives',
+        path: '/archives',
         icon: 'icon-archive'
       },
       {
         id: 4,
         name: '留言板',
-        path: 'message',
+        path: '/message',
         icon: 'icon-comments'
       },
       {
         id: 5,
         name: '关于',
-        path: 'about',
+        path: '/about',
         icon: 'icon-app_about'
       },
       {
         id: 6,
         name: '搜索',
-        path: 'search',
+        path: '/search',
         icon: 'icon-search'
       }
     ],

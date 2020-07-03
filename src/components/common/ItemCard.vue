@@ -3,28 +3,42 @@
     <el-card id="normalCard" :body-style="{ padding: '0px' }">
       <el-row>
         <el-col :spam="12" class="card-image">
-          <el-image :src="article.cover" fit="cover" lazy></el-image>
+          <router-link target="_blank" :to="/article/ + article.id">
+            <el-image :src="article.cover" fit="cover" lazy></el-image>
+          </router-link>
         </el-col>
         <el-col :span="12">
           <div class="card-content">
+            <router-link target="_blank" :to="/article/ + article.id">
               <div class="title">{{ article.title }}</div>
+            </router-link>
             <el-row>
               <div class="card_bottom">
-                <el-col :span="2" class="userInfo">
-                  <el-avatar :size="24" :src="article.avatar" />
-                </el-col>
-                <el-col :span="5">
-                  <span class="author">{{ article.author }}</span>
-                </el-col>
-                <el-col :span="10">
-                  <span class="date-text">{{ article.createTime | dateFormatToDate }}</span>
-                </el-col>
-                <el-col :span="4">
-                  <i class="iconfont icon-shandian"></i>
-                  <span class="article_info_count">{{ article.likes }}</span>
-                  <i class="iconfont icon-pinglun"></i>
-                  <span class="article_info_count">{{ article.comments }}</span>
-                </el-col>
+                <div class="userInfo">
+                  <div class="userAvatar">
+                    <router-link target="_blank" :to="/article/ + article.id">
+                      <el-avatar :size="24" :src="article.avatar" />
+                    </router-link>
+                  </div>
+                  <div class="userName">
+                    <router-link target="_blank" :to="/article/ + article.id">
+                      <span class="author">{{ article.author }}</span>
+                    </router-link>
+                  </div>
+                  <div class="createTime">
+                    <span class="date-text">{{ article.createTime | dateFormatToDate }}</span>
+                  </div>
+                </div>
+                <div class="articleInFoCount">
+                  <router-link target="_blank" :to="/article/ + article.id">
+                    <i class="iconfont icon-shandian"></i>
+                    <span class="article_info_count">{{ article.likesCount | countFilter }}</span>
+                  </router-link>
+                  <router-link target="_blank" :to="/article/ + article.id" class="articleCommentIcon">
+                    <i class="iconfont icon-pinglun"></i>
+                    <span class="article_info_count">{{ article.commentsCount | countFilter }}</span>
+                  </router-link>
+                </div>
               </div>
             </el-row>
           </div>
@@ -33,7 +47,9 @@
     </el-card>
     <el-card id="mobileCard" :body-style="{ padding: '0px' }">
       <el-row>
-        <el-image :src="article.cover" fit="cover" lazy></el-image>
+        <router-link target="_blank" :to="/article/ + article.id">
+          <el-image :src="article.cover" fit="cover" lazy></el-image>
+        </router-link>
         <el-row class="userInfo">
           <el-avatar :size="24" :src="article.avatar" />
           <span class="author">{{ article.author }}</span>
@@ -41,7 +57,9 @@
         </el-row>
       </el-row>
       <el-row>
-        <div class="title">《再见狂野之心》：合成器流行专辑与刺激竞速的碰撞</div>
+        <router-link target="_blank" :to="/article/ + article.id">
+          <div class="title">{{ article.title }}</div>
+        </router-link>
       </el-row>
     </el-card>
   </div>
@@ -84,7 +102,6 @@ export default {
     padding: 0 15px;
     margin-bottom: 15px;
     #normalCard {
-      /*display: none;*/
       height: 200px !important;
       border: 0;
       .card-image {
@@ -117,7 +134,22 @@ export default {
             cursor:pointer;
           }
           .card_bottom {
+            height: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             color: #8E8787;
+            .userInfo {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              div {
+                padding-right: 10px;
+              }
+              .userAvatar {
+                margin-top: 5px;
+              }
+            }
             .el-avatar {
               cursor:pointer;
             }
@@ -125,8 +157,19 @@ export default {
               color: #292525;
               cursor:pointer;
             }
-            .article_info_count {
-              padding: 5px;
+            .articleInFoCount {
+              a {
+                color: #8e8787;
+              }
+              .articleCommentIcon {
+                margin-left: 10px;
+              }
+              .icon-shandian {
+                padding: 1px;
+              }
+              .icon-pinglun {
+                padding: 5px;
+              }
             }
           }
         }

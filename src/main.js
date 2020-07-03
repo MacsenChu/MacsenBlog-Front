@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+// 导入filters
+import '../utils/filters'
 import './plugins/element.js'
 // 导入全局样式表
 import './assets/css/global.css'
@@ -25,13 +27,13 @@ import VueParticles from 'vue-particles'
 // 导入 NProgress 包对应的JS和CSS
 import Nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
-
+// 导入WOW.JS
 import 'wowjs/css/libs/animate.css'
+
 // 导入axios
 import axios from 'axios'
 // 配置请求的根路径
 axios.defaults.baseURL = 'http://192.168.0.104:8001/api/'
-// axios.defaults.baseURL = 'http://39.106.111.206:8001/api/'
 // 在 request 拦截器中，展示进度条 Nprogress.start()
 axios.interceptors.request.use(config => {
   Nprogress.start()
@@ -47,30 +49,6 @@ Vue.prototype.$http = axios
 
 Vue.use(infiniteScroll)
 Vue.use(VueParticles)
-
-Vue.filter('dateFormat', function (originVal) {
-  const dt = new Date(originVal)
-
-  const y = dt.getFullYear()
-  const m = (dt.getMonth() + 1 + '').padStart(2, '0')
-  const d = (dt.getDate() + 1 + '').padStart(2, '0')
-
-  const hh = (dt.getHours() + '').padStart(2, '0')
-  const mm = (dt.getMinutes() + '').padStart(2, '0')
-  const ss = (dt.getSeconds() + '').padStart(2, '0')
-
-  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
-})
-
-Vue.filter('dateFormatToDate', function (originVal) {
-  const dt = new Date(originVal)
-
-  const y = dt.getFullYear()
-  const m = (dt.getMonth() + 1 + '').padStart(2, '0')
-  const d = (dt.getDate() + 1 + '').padStart(2, '0')
-
-  return `${y}-${m}-${d}`
-})
 
 new Vue({
   router,

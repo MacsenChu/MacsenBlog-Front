@@ -23,7 +23,12 @@ import {
   Table,
   TableColumn,
   Loading,
-  Divider
+  Divider,
+  Tag,
+  Message,
+  Form,
+  FormItem,
+  Input
 } from 'element-ui'
 
 Vue.use(Button)
@@ -50,3 +55,9 @@ Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(Loading)
 Vue.use(Divider)
+Vue.use(Tag)
+Vue.use(Form)
+Vue.use(FormItem)
+Vue.use(Input)
+
+Vue.prototype.$message = Message

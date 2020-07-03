@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import VueSticky from 'vue-sticky'
 import socialLink from '../common/SocialLink'
 export default {
@@ -35,16 +36,6 @@ export default {
   },
   data () {
     return {
-      footerInfo: {
-        id: 1,
-        visits_count: '8888',
-        visitors_count: '6666',
-        runtime: '2020-05-20T05:21:00',
-        recordNumber: '88888888',
-        recordName: 'Macsen Chu',
-        copyrightYear: new Date().getFullYear(),
-        copyrightName: 'Macsen'
-      },
       diffDate: {},
       TIME_CONSTANT: {
         MILLISECOND: 1000,
@@ -63,18 +54,10 @@ export default {
     }
   },
   created () {
-    this.getFooterInfo()
+    this.$store.dispatch('footer/getFooterInfo')
+    setInterval(this.setTime, 1000)
   },
   methods: {
-    async getFooterInfo () {
-      try {
-        const { data } = await this.$http.get('footer')
-        this.footerInfo = data
-      } catch (e) {
-        console.log(e)
-      }
-      setInterval(this.setTime, 1000)
-    },
     setTime () {
       const diff = new Date() - new Date(this.footerInfo.runtime)
       const diffYears = Math.floor(diff / this.TIME_CONSTANT.YEARS)
@@ -88,6 +71,11 @@ export default {
       this.runtime.minutes = diffMinutes
       this.runtime.seconds = diffSeconds
     }
+  },
+  computed: {
+    ...mapState({
+      footerInfo: state => state.footer.footerInfo
+    })
   }
 }
 </script>
