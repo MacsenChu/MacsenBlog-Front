@@ -72,7 +72,7 @@ export default {
       }
     },
     activeIndex () {
-      return this.$route.path || '/home'
+      return this.$route.path === '/' ? '/home' : this.$route.path
     }
   }
 }

@@ -28,7 +28,8 @@ import {
   Message,
   Form,
   FormItem,
-  Input
+  Input,
+  Pagination
 } from 'element-ui'
 
 Vue.use(Button)
@@ -59,5 +60,6 @@ Vue.use(Tag)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
+Vue.use(Pagination)
 
 Vue.prototype.$message = Message

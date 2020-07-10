@@ -51,7 +51,7 @@ export default {
       }
     },
     activeIndex () {
-      return this.$route.path.substring(1, this.$route.path.length) || 'home'
+      return this.$route.path === '/' ? '/home' : this.$route.path
     }
   },
   methods: {
