@@ -41,7 +41,7 @@
         <!-- infinite-scroll-disabled false是执行loadMore，true是不执行 -->
       <el-row>
         <el-col v-if="articleList.length > 0" :lg="18" :md="18" v-infinite-scroll="loadMore" infinite-scroll-disabled="infinite_scroll_disabled" infinite-scroll-distance="0">
-            <item-card v-for="article in articleList" :key="article.id" :article="article"></item-card>
+          <item-card v-for="article in articleList" :key="article.id" :article="article"></item-card>
           <loading-card :loading="!loading"></loading-card>
         </el-col>
         <!-- 这两个元素都用scrollreveal总是有那么些问题 这里选择了又引入了wow.js, 我技术太差了，这个项目的优化空间非常大 -->
@@ -280,7 +280,6 @@ export default {
   methods: {
     async getArticleList (offset) {
       try {
-        // const { data } = await this.$http.get(`articleList?limit=${this.limit}&offset=${offset * this.limit}`)
         const { data } = await this.$http.get('articleList', {
           params: {
             limit: this.limit,

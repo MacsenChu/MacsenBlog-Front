@@ -3,7 +3,7 @@
     <cover></cover>
     <div id="container">
       <div class="categoriesCard">
-        <el-card>
+        <el-card  data-aos="fade-down">
           <div class="title">
             <i class="iconfont icon-book-mark"></i>
             <span>文章分类</span>
@@ -25,7 +25,7 @@
             <i class="iconfont icon-biaoqian"></i>
             <span>文章标签</span>
           </div>
-          <div id="tag-wordcloud" class="card-content"></div>
+          <div id="tag-wordcloud"></div>
         </el-card>
       </div>
       <el-row class="archivesItem" v-if="articleList">
@@ -66,145 +66,17 @@ export default {
       articleList: {
         articles: []
       },
-      tags: [
-        {
-          text: 'Hexo',
-          weight: 2
-        },
-        {
-          text: 'hexo-theme-matery',
-          weight: 1
-        },
-        {
-          text: 'JavaScript',
-          weight: 4
-        },
-        {
-          text: 'PostgreSQL',
-          weight: 1
-        },
-        {
-          text: '数据库',
-          weight: 1
-        },
-        {
-          text: 'Java',
-          weight: 43
-        },
-        {
-          text: 'Google',
-          weight: 1
-        },
-        {
-          text: '整洁代码',
-          weight: 1
-        },
-        {
-          text: '重构',
-          weight: 1
-        },
-        {
-          text: '测试',
-          weight: 1
-        },
-        {
-          text: '面向对象编程',
-          weight: 3
-        },
-        {
-          text: 'CPU缓存',
-          weight: 1
-        },
-        {
-          text: 'UML',
-          weight: 2
-        },
-        {
-          text: '设计原则',
-          weight: 1
-        },
-        {
-          text: '性能测试',
-          weight: 1
-        },
-        {
-          text: 'MVEL',
-          weight: 2
-        },
-        {
-          text: '单元测试',
-          weight: 2
-        },
-        {
-          text: 'JPA',
-          weight: 1
-        },
-        {
-          text: 'Fenix',
-          weight: 1
-        },
-        {
-          text: 'Spring',
-          weight: 2
-        },
-        {
-          text: 'SpringBoot',
-          weight: 1
-        },
-        {
-          text: 'Git',
-          weight: 1
-        },
-        {
-          text: 'Linux',
-          weight: 4
-        },
-        {
-          text: 'Typora',
-          weight: 1
-        },
-        {
-          text: 'Markdown',
-          weight: 1
-        },
-        {
-          text: 'Vue',
-          weight: 1
-        },
-        {
-          text: 'GitLab CI',
-          weight: 1
-        },
-        {
-          text: 'DevOps',
-          weight: 1
-        },
-        {
-          text: 'Jenkins',
-          weight: 1
-        },
-        {
-          text: '设计模式',
-          weight: 14
-        },
-        {
-          text: 'Apache',
-          weight: 4
-        }
-      ],
+      tags: [],
       pageNum: 1,
       pageSize: 15
     }
   },
   created () {
     this.getCategories()
+    this.getTags()
   },
   mounted () {
     AOS.init()
-    $('#tag-wordcloud').jQCloud(this.tags, {
-      autoResize: true,
-      height: 300
-    })
   },
   methods: {
     hashCode (str) {
@@ -222,6 +94,20 @@ export default {
       try {
         const { data } = await this.$http.get('categories')
         this.categories = data
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async getTags () {
+      try {
+        const { data } = await this.$http.get('tags')
+        this.tags = data
+        this.$nextTick(_ => {
+          $('#tag-wordcloud').jQCloud(this.tags, {
+            autoResize: true,
+            height: 300
+          })
+        })
       } catch (e) {
         console.log(e)
       }

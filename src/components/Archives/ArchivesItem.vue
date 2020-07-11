@@ -16,7 +16,7 @@
       </el-row>
       <div class="articleDateRow">
         <span><i class="iconfont icon-calendar-minus"></i>{{ article.updateTime | dateFormatToDate }}</span>
-        <span><i class="iconfont icon-book-mark"></i>{{ article.categories }}</span>
+        <span><i class="iconfont icon-book-mark"></i>{{ article.category }}</span>
       </div>
       <el-divider></el-divider>
       <div class="infoCount">

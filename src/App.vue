@@ -23,7 +23,7 @@
     >
     </vue-particles>
     <router-view/>
-    <blog-footer v-if="this.$route.path !== '/' && this.$route.path !== '/home'" />
+    <blog-footer v-if="this.$route.path !== '/' && this.$route.path !== '/home' && this.$route.path !== '/search'" />
     <el-backtop style="color:#354b60;"></el-backtop>
   </div>
 </template>

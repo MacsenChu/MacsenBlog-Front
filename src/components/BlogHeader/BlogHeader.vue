@@ -19,7 +19,9 @@
       </span>
       <h2 class="logo waves-effect waves-light">{{ headerInfo.title }}</h2>
       <span class="waves-effect waves-light">
-        <i class="iconfont icon-search1" style="font-size:26px"></i>
+        <router-link to="/search">
+          <i class="iconfont icon-search1" style="font-size:26px"></i>
+        </router-link>
       </span>
     </header>
   </div>

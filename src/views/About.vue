@@ -3,7 +3,7 @@
     <cover></cover>
     <div id="container">
       <div class="aboutCard wow fadeInUp">
-        <el-card id="aboutCard" data-aos="fade-up">
+        <el-card id="aboutCard" data-aos="fade-down">
           <el-row class="avatar">
             <el-avatar :size="150" :src="headerInfo.avatarUrl" />
           </el-row>
