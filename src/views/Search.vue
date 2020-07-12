@@ -14,7 +14,18 @@
           <el-button type="primary" slot="append" @click="search">搜索</el-button>
         </el-input>
       </div>
-      <div id="tag-wordcloud" data-aos="fade-up" v-show="articles.articleList.length === 0"></div>
+      <div id="nomarlTags" v-if="articles.articleList.length === 0" data-aos="zoom-in-up">
+        <span class="title"><i class="iconfont icon-biaoqian"></i>标签墙</span>
+        <div class="tag-chips">
+          <span  class="chip center-align waves-effect waves-light chip-default"
+              v-for="(tag, index) in tags" :key="tag.id"
+              :style="{ 'background-color': ++index >= colorArr.length ? colorArr[Math.abs(hashCode(tag.tag) % colorArr.length)] : colorArr[index - 1] }"
+              @click="handleSelectTags(tag.id, tag.tag)">
+          {{ tag.tag }}
+          <span class="tag-length">{{ tag.count }}</span>
+        </span>
+        </div>
+      </div>
       <div id="main" v-if="articles.articleList.length > 0">
         <el-row>
           <el-col :lg="18" :md="18">
@@ -33,12 +44,13 @@
               <el-card :body-style="{ padding: '0px' }" class="tags">
                 <span class="iconName"><i class="iconfont icon-biaoqian"></i>标签墙</span>
                 <div class="tag-chips">
-                <span :class="['chip', 'center-align', 'waves-effect', 'waves-light', 'chip-default']"
-                      v-for="(tag, index) in tags" :key="index"
-                      :style="{ 'background-color': ++index >= colorArr.length ? colorArr[Math.abs(hashCode(tag.text) % colorArr.length)] : colorArr[index - 1] }">
-                  {{ tag.text }}
-                  <span class="tag-length">{{ tag.weight }}</span>
-                </span>
+                  <span :class="['chip', 'center-align', 'waves-effect', 'waves-light', 'chip-default', { 'chip-active': tag.id === selectTag }]"
+                        v-for="(tag, index) in tags" :key="tag.id"
+                        :style="{ 'background-color': ++index >= colorArr.length ? colorArr[Math.abs(hashCode(tag.tag) % colorArr.length)] : colorArr[index - 1] }"
+                        @click="handleSelectTags(tag.id, tag.tag)">
+                    {{ tag.tag }}
+                    <span class="tag-length">{{ tag.count }}</span>
+                  </span>
                 </div>
               </el-card>
               <footer-card></footer-card>
@@ -48,6 +60,7 @@
         </el-row>
       </div>
     </div>
+    <blog-footer v-if="isMobile" />
   </div>
 </template>
 
@@ -55,25 +68,25 @@
 import cover from '../components/common/Cover'
 import itemCard from '../components/common/ItemCard'
 import footerCard from '../components/common/FooterCard'
+import BlogFooter from '../components/BlogFooter/BlogFooter'
 import VueSticky from 'vue-sticky'
-import $ from 'jquery'
-import 'jqcloud2/dist/jqcloud.min'
-import 'jqcloud2/dist/jqcloud.min.css'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 export default {
   components: {
     cover,
     itemCard,
-    footerCard
+    footerCard,
+    BlogFooter
   },
   directives: {
     sticky: VueSticky
   },
   data () {
     return {
-      colorArr: ['#F9EBEA', '#F5EEF8', '#D5F5E3', '#E8F8F5', '#FEF9E7', '#F8F9F9', '#82E0AA', '#D7BDE2', '#A3E4D7', '#85C1E9', '#F8C471', '#F9E79F', '#FFF'],
       keyword: '',
+      selectTag: 0,
+      colorArr: ['#F9EBEA', '#F5EEF8', '#D5F5E3', '#E8F8F5', '#FEF9E7', '#F8F9F9', '#82E0AA', '#D7BDE2', '#A3E4D7', '#85C1E9', '#F8C471', '#F9E79F', '#FFF'],
       tags: [],
       articles: {
         articleList: []
@@ -85,7 +98,8 @@ export default {
       sticky: {
         stickyTop: 75,
         disabled: false
-      }
+      },
+      isMobile: false
     }
   },
   created () {
@@ -93,6 +107,9 @@ export default {
   },
   mounted () {
     AOS.init()
+    if (document.documentElement.clientWidth < 768) {
+      this.isMobile = true
+    }
   },
   methods: {
     hashCode (str) {
@@ -119,11 +136,12 @@ export default {
             pageSize: this.pageSize
           }
         })
-        if (data.length === 0) {
+        if (data.articleList.length === 0) {
           this.$message.info('没有找到该文章')
+        } else {
+          this.articles = data
+          this.setStickTop()
         }
-        this.articles = data
-        this.setStickTop()
       } catch (e) {
         console.log(e)
       }
@@ -132,15 +150,14 @@ export default {
       try {
         const { data } = await this.$http.get('tags')
         this.tags = data
-        this.$nextTick(_ => {
-          $('#tag-wordcloud').jQCloud(this.tags, {
-            autoResize: true,
-            height: 300
-          })
-        })
       } catch (e) {
         console.log(e)
       }
+    },
+    handleSelectTags (tagId, tag) {
+      this.selectTag = tagId
+      this.keyword = tag
+      this.search()
     },
     setStickTop () {
       this.$nextTick(_ => {
@@ -218,8 +235,57 @@ export default {
           }
         }
       }
-      #tag-wordcloud {
-        margin: 50px 0;
+      #nomarlTags {
+        .title, i {
+          font-size: 1.75rem;
+          color: @articleColor;
+        }
+        .title {
+          i {
+            margin: 5px;
+          }
+        }
+        max-width: 850px;
+        text-align: center;
+        @media screen and (min-width: 750px) {
+          margin: 20px auto 40px auto;
+        }
+        @media screen and (max-width: 750px) {
+          margin: 20px auto;
+        }
+        .iconName {
+          i {
+            font-size: 20px;
+            padding: 5px;
+          }
+          font-size: 20px;
+        }
+        .tag-chips {
+          .chip {
+            margin: 10px 10px;
+            padding: 19px 14px;
+            display: inline-flex;
+            line-height: 0;
+            height: 32px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, .12);
+            z-index: 0;
+            .tag-length {
+              margin-left: 5px;
+              margin-right: -2px;
+              font-size: 0.5rem;
+              color: #e91e63;
+              margin-top: 1px;
+            }
+          }
+          .chip:hover {
+            color: #fff;
+            background: linear-gradient(to right, #4cbf30 0%, #0f9d58 100%) !important;
+          }
+        }
       }
       #main {
         display:flex;
@@ -240,6 +306,7 @@ export default {
             font-size: 20px;
           }
           .tag-chips {
+            margin: 5px 0;
             .chip {
               margin: 5px;
               display: inline-flex;
@@ -263,13 +330,15 @@ export default {
               color: #fff;
               background: linear-gradient(to right, #4cbf30 0%, #0f9d58 100%) !important;
             }
+            .chip-active {
+              color: #FFF !important;
+              background: linear-gradient(to bottom right, #FF5E3A 0%, #FF2A68 100%) !important;
+              box-shadow: 2px 5px 10px #aaa !important;
+              .tag-length {
+                color: #FFF !important;
+              }
+            }
           }
-        }
-        /deep/ .pagination {
-          @media screen and (max-width: 750px) {
-            padding: 20px 0;
-          }
-
         }
         .blank {
           height: 30px;

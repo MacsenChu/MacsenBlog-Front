@@ -12,37 +12,48 @@
           </el-row>
           <el-row>
             <social-link color="#303133" placement="bottom"></social-link>
-            <el-divider></el-divider>
+          </el-row>
+          <el-divider></el-divider>
+          <el-row>
+            <div class="description center" v-html="desc"></div>
+          </el-row>
+          <el-row id="aplayerCard" data-aos="zoom-in-up">
+            <div id="aplayerCore"></div>
+          </el-row>
+          <el-row class="mySkills" data-aos="zoom-in-up">
+            <!-- 我能有啥技能？我唯一的技能就是吹牛* -->
+            <span class="title"><i class="iconfont icon-jineng-copy"></i>我的技能</span>
           </el-row>
           <el-row>
-            <div class="description center">
-              <div>
-                Hi，我叫初明泽，也是Macsen~ <br>
-                出生于2000年，目前折腾在 0 和 1 世界里
+            <el-col :sm="24" :md="12" :lg="12" data-aos="fade-up" v-for="skill in skills" :key="skill.id">
+              <div class="skillbar">
+                <div class="skillbar-title" :style="{ background: skill.background, width: skill.percent }">
+                  <span>{{ skill.skill }}</span>
+                </div>
+                <div class="skill-bar-percent">{{ skill.percent }}</div>
               </div>
-              <div style="margin-top: 20px">
-                我没有高颜值的外表 <br>
-                没有可以挥霍的资本 <br>
-                没有人喜欢我三五年 <br>
-                我就是想漫无目的的走走 <br>
-                如果可以的话努努力发笔小财<br>
-                然后买点自己喜欢的东西
-              </div>
-              <div style="margin: 20px 0">
-                但即便这样，我也对未来充满愿景 <br>
-                我也相信终有一天会找到我自己的神明 <br>
-                那时候，神明一来，所有抑郁不欢而散 <br>
-                取而代之的，是满天繁星
-              </div>
-              <el-divider></el-divider>
-              <div style="margin-top: 20px">
-                “感性的人过不了柴米油盐，理性的人过不了风花雪月。”<br>“愿你，一半烟火，一半诗意，过成自己喜欢的样子。”
-              </div>
-              <br>
+            </el-col>
+          </el-row>
+          <el-row class="otherSkill" data-aos="zoom-in-up">
+            <span class="title"><i class="iconfont icon-jineng"></i>其它技能</span>
+          </el-row>
+          <el-row>
+            <div class="tag-chips">
+              <span class="chip center-align waves-effect waves-light chip-default"
+                    data-aos="zoom-in-up"
+                    v-for="(skill, index) in otherSkills" :key="skill.id"
+                    :style="{ 'background-color': ++index >= colorArr.length ? colorArr[Math.abs(hashCode(skill.skill) % colorArr.length)] : colorArr[index - 1] }">
+                {{ skill.skill }}
+              </span>
             </div>
           </el-row>
-          <el-row id="aplayerCard">
-            <div id="aplayerCore"></div>
+          <el-row class="statistics" data-aos="zoom-in-up">
+            <span class="title">文章统计图</span>
+          </el-row>
+          <el-row id="echarts">
+            <el-col :lg="8" :md="12" :sm="24" data-aos="zoom-in-up" id="posts-chart"></el-col>
+            <el-col :lg="8" :md="12" :sm="24" data-aos="zoom-in-up" id="categories-chart"></el-col>
+            <el-col :lg="8" :md="12" :sm="24" data-aos="zoom-in-up" id="tags-chart"></el-col>
           </el-row>
         </el-card>
       </div>
@@ -58,6 +69,7 @@ import 'aos/dist/aos.css'
 import { mapState } from 'vuex'
 import APlayer from 'aplayer'
 import 'aplayer/dist/APlayer.min.css'
+import echarts from 'echarts'
 export default {
   components: {
     cover,
@@ -65,141 +77,261 @@ export default {
   },
   data () {
     return {
+      desc: '',
+      colorArr: ['#F9EBEA', '#F5EEF8', '#D5F5E3', '#E8F8F5', '#FEF9E7', '#F8F9F9', '#82E0AA', '#D7BDE2', '#A3E4D7', '#85C1E9', '#F8C471', '#F9E79F', '#FFF'],
+      skills: [],
+      otherSkills: [],
+      music: []
     }
+  },
+  created () {
+    this.getUserInfo()
+    this.getMusic()
+    this.getSkills()
+    this.getOtherSkills()
+    this.getPublishStatistics()
+    this.getCategories()
+    this.getTopTags()
   },
   mounted () {
     AOS.init()
-    /* eslint-disable no-new */
-    new APlayer({
-      container: document.getElementById('aplayerCore'),
-      mini: false,
-      autoplay: false,
-      theme: '#FADFA3',
-      loop: 'all',
-      order: 'list',
-      preload: 'auto',
-      volume: 0.7,
-      mutex: true,
-      listFolded: false,
-      listMaxHeight: 90,
-      lrcType: 1,
-      audio: [
-        {
-          name: 'そばにいるね',
-          artist: '青山テルマ',
-          url: 'https://onedrive.gimhoy.com/1drv/aHR0cHM6Ly8xZHJ2Lm1zL3UvcyFBcUMxQkwwWkdfYnFsV0ZINVJxNUQtMzhJRzhhP2U9WFliczZO.mp3',
-          cover: 'http://p2.music.126.net/GFbvZasO56D_Co6Rr31srA==/109951163089243761.jpg?param=130y130',
-          lrc: '[00:00.000] 作曲 : Soulja\n' +
-            '[00:01.000] 作词 : Soulja、青山テルマ\n' +
-            '[00:12.200]あなたのこと 私は今でも\n' +
-            '[00:14.690]思い続けているよ\n' +
-            '[00:17.780]いくら時流れて行こうと\n' +
-            '[00:20.620]I\'m by your side baby いつでも\n' +
-            '[00:23.820]So. どんなに離れていようと\n' +
-            '[00:26.710]心の中では  いつでも\n' +
-            '[00:29.660]一緒にいるけど 寂しいんだよ\n' +
-            '[00:32.610]So baby please ただ hurry back home\n' +
-            '[00:35.170]\n' +
-            '[00:35.750]Baby boy あたしはここにいるよ\n' +
-            '[00:39.870]どこもいかずに待ってるよ\n' +
-            '[00:42.720]You know dat I love you だからこそ\n' +
-            '[00:45.720]心配しなくていいんだよ\n' +
-            '[00:48.810]どんなに遠くにいても\n' +
-            '[00:51.820]変わらないよこの心\n' +
-            '[00:54.970]言いたい事わかるでしょ?\n' +
-            '[00:57.850]あなたのこと待ってるよ\n' +
-            '[00:59.400]\n' +
-            '[01:00.240]BOY(SoulJa):\n' +
-            '[01:01.130]んなことよりお 前の方は元気か?\n' +
-            '[01:04.250]ちゃんと飯食ってるか?\n' +
-            '[01:06.530]ちくしょう、やっぱ言えねぇや\n' +
-            '[01:08.790]また今度送るよ 俺からの\n' +
-            '[01:10.830]\n' +
-            '[01:11.630]GIRL(青山テルマ)\n' +
-            '[01:12.260]過ぎ去った時は戻せないけれど\n' +
-            '[01:17.590]近くにいてくれた君が恋しいの\n' +
-            '[01:23.790]だけど あなたとの距離が遠くなる程に\n' +
-            '[01:29.410]忙しくみせていた\n' +
-            '[01:32.340]あたし逃げてたの\n' +
-            '[01:35.680]だけど 目を閉じる時 眠ろうとする時\n' +
-            '[01:39.170]逃げきれないよ あなたの事\n' +
-            '[01:43.130]思い出しては 一人泣いてたの\n' +
-            '[01:47.440]\n' +
-            '[01:48.000]あなたのこと  私は今でも\n' +
-            '[01:50.530]思い続けているよ\n' +
-            '[01:53.600]いくら時流れて行こうと\n' +
-            '[01:56.490]I\'m by your side baby いつでも\n' +
-            '[01:59.670]So. どんなに離れていようと\n' +
-            '[02:02.550]心の中では いつでも\n' +
-            '[02:05.540]一緒にいるけど 寂しいんだよ\n' +
-            '[02:08.510]So baby please ただ hurry back home\n' +
-            '[02:11.160]\n' +
-            '[02:11.710]Baby boy あたしはここにいるよ\n' +
-            '[02:15.720]どこもいかずに待ってるよ\n' +
-            '[02:18.800]You know dat I love you だからこそ\n' +
-            '[02:21.860]心配しなくていいんだよ\n' +
-            '[02:24.670]どんなに遠くにいても\n' +
-            '[02:27.830]変わらないよこの心\n' +
-            '[02:30.750]言いたい事わかるでしょ?\n' +
-            '[02:33.810]あなたのこと待ってるよ\n' +
-            '[02:35.400]\n' +
-            '[02:36.050]BOY(SoulJa):\n' +
-            '[02:36.920]不器用な俺 遠くにいる君\n' +
-            '[02:39.490]伝えたい気持ちそのまま言えずに\n' +
-            '[02:42.340]君は行っちまった\n' +
-            '[02:44.740]今じゃ殘された君はアルバムの中\n' +
-            '[02:46.600]\n' +
-            '[02:47.200]GIRL(青山テルマ)\n' +
-            '[02:47.950]アルバムの中 納めた思い出の\n' +
-            '[02:53.410]日々より 何げない一時が\n' +
-            '[02:56.680]今じゃ戀しいの\n' +
-            '[02:58.810]（BOY:君のぬくもり\n' +
-            '[02:59.680]And now あなたからの電話待ち続けていた\n' +
-            '[03:05.630]攜帯にぎりしめながら眠りについた\n' +
-            '[03:10.930]（BOY:抱きしめてやりたい\n' +
-            '[03:11.970]あたしは どこも行かない\n' +
-            '[03:13.880]ここにいるけれど\n' +
-            '[03:15.390]見つめ合いたいあなたのその瞳\n' +
-            '[03:19.190]ねぇわかるでしょ? あたし待ってるよ\n' +
-            '[03:24.190]\n' +
-            '[03:35.680]Baby boy あたしはここにいるよ\n' +
-            '[03:39.670]どこもいかずに待ってるよ\n' +
-            '[03:42.720]You know dat I love you だからこそ\n' +
-            '[03:46.000]心配しなくていいんだよ\n' +
-            '[03:48.820]どんなに遠くにいても\n' +
-            '[03:51.900]変わらないよこの心\n' +
-            '[03:54.910]言いたい事わかるでしょ?\n' +
-            '[03:57.760]あなたのこと待ってるよ\n' +
-            '[03:59.200]\n' +
-            '[03:59.700]BOY(SoulJa):\n' +
-            '[04:00.200]俺はどこも行かないよ\n' +
-            '[04:01.710]ここにいるけれど\n' +
-            '[04:03.350]探し続けるあなたの顏\n' +
-            '[04:06.000]Your 笑顏 今でも觸れそうだって\n' +
-            '[04:09.300]思いながら手を伸ばせば 君は\n' +
-            '[04:11.800]\n' +
-            '[04:12.210]GIRL(青山テルマ)\n' +
-            '[04:12.890]あなたのこと 私は今でも\n' +
-            '[04:14.670]思い続けているよ\n' +
-            '[04:17.630]いくら時流れて行こうと\n' +
-            '[04:20.650]I\'m by your side baby いつでも\n' +
-            '[04:23.590]So. どんなに離れていようと\n' +
-            '[04:26.520]心の中では  いつでも\n' +
-            '[04:29.590]一緒にいるけど 寂しいんだよ\n' +
-            '[04:32.630]So baby please ただ hurry back home\n' +
-            '[04:35.070]\n' +
-            '[04:35.850]あなたのこと 私は今でも\n' +
-            '[04:38.750]思い続けているよ\n' +
-            '[04:41.880]いくら時流れて行こうと\n' +
-            '[04:44.600]I\'m by your side baby いつでも\n' +
-            '[04:47.660]So. どんなに離れていようと\n' +
-            '[04:50.530]心の中では  いつでも\n' +
-            '[04:53.570]一緒にいるけど 寂しいんだよ\n' +
-            '[04:56.610]So baby please ただ hurry back hom',
-          theme: '#46718b'
-        }
-      ]
-    })
+  },
+  methods: {
+    hashCode (str) {
+      if (!str && str.length === 0) {
+        return 0
+      }
+      let hash = 0
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i)
+        hash |= 0
+      }
+      return hash
+    },
+    async getUserInfo () {
+      try {
+        const { data } = await this.$http.get('about')
+        this.desc = data
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async getMusic () {
+      try {
+        const { data } = await this.$http.get('music')
+        this.music = data
+        this.initAplayer()
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async getSkills () {
+      try {
+        const { data } = await this.$http.get('skills')
+        data.forEach(_ => {
+          _.percent = parseInt(Math.random() * 30 + 60, 10) + '%'
+        })
+        this.skills = data
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async getOtherSkills () {
+      try {
+        const { data } = await this.$http.get('otherSkills')
+        this.otherSkills = data
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    initAplayer () {
+      /* eslint-disable no-new */
+      new APlayer({
+        container: document.getElementById('aplayerCore'),
+        mini: false,
+        autoplay: false,
+        theme: '#FADFA3',
+        loop: 'all',
+        order: 'list',
+        preload: 'auto',
+        volume: 0.7,
+        mutex: true,
+        listFolded: false,
+        listMaxHeight: 90,
+        lrcType: 1,
+        audio: this.music
+      })
+    },
+    async getPublishStatistics () {
+      try {
+        const { data } = await this.$http.get('publishStatistics')
+        const month = []
+        const total = []
+        data.forEach(_ => {
+          month.push(_.month)
+          total.push(_.total)
+        })
+        this.initPostsChart(month, total)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    initPostsChart (month, total) {
+      const postsChart = echarts.init(document.getElementById('posts-chart'))
+      const postsOption = ({
+        title: {
+          text: '文章发布统计图',
+          top: -5,
+          x: 'center'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        xAxis: {
+          type: 'category',
+          data: month
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            name: '文章篇数',
+            type: 'line',
+            color: ['#6772e5'],
+            data: total,
+            markPoint: {
+              symbolSize: 45,
+              color: ['#fa755a', '#3ecf8e', '#82d3f4'],
+              data: [{
+                type: 'max',
+                itemStyle: { color: ['#3ecf8e'] },
+                name: '最大值'
+              }, {
+                type: 'min',
+                itemStyle: { color: ['#fa755a'] },
+                name: '最小值'
+              }]
+            },
+            markLine: {
+              itemStyle: { color: ['#ab47bc'] },
+              data: [
+                { type: 'average', name: '平均值' }
+              ]
+            }
+          }
+        ]
+      })
+      postsChart.setOption(postsOption)
+    },
+    async  getCategories () {
+      try {
+        const { data } = await this.$http.get('categories')
+        const categories = []
+        data.forEach(_ => {
+          categories.push({
+            name: _.category,
+            value: _.count
+          })
+        })
+        this.initCategoriesChart(categories)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    initCategoriesChart (categories) {
+      const categoriesChart = echarts.init(document.getElementById('categories-chart'))
+      const categoriesOption = {
+        title: {
+          text: '文章分类统计图',
+          top: -4,
+          x: 'center'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        series: [
+          {
+            name: '分类',
+            type: 'pie',
+            radius: '50%',
+            color: ['#6772e5', '#ff9e0f', '#fa755a', '#3ecf8e', '#82d3f4', '#ab47bc', '#525f7f', '#f51c47', '#26A69A'],
+            data: categories,
+            itemStyle: {
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      }
+      categoriesChart.setOption(categoriesOption)
+    },
+    async getTopTags () {
+      const { data } = await this.$http.get('topTags')
+      const tagNames = []
+      const tagCount = []
+      data.forEach(_ => {
+        tagNames.push(_.tag)
+        tagCount.push(_.count)
+      })
+      this.initTagsChart(tagNames, tagCount)
+    },
+    initTagsChart (tagNames, tagCount) {
+      const tagsChart = echarts.init(document.getElementById('tags-chart'))
+      const tagsOption = {
+        title: {
+          text: 'TOP10 标签统计图',
+          top: -5,
+          x: 'center'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: tagNames
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: [
+          {
+            name: '标签统计',
+            type: 'bar',
+            color: ['#82d3f4'],
+            barWidth: 18,
+            data: tagCount,
+            markPoint: {
+              symbolSize: 45,
+              data: [{
+                type: 'max',
+                itemStyle: { color: ['#3ecf8e'] },
+                name: '最大值'
+              }, {
+                type: 'min',
+                itemStyle: { color: ['#fa755a'] },
+                name: '最小值'
+              }]
+            },
+            markLine: {
+              itemStyle: { color: ['#ab47bc'] },
+              data: [
+                { type: 'average', name: '平均值' }
+              ]
+            }
+          }
+        ]
+      }
+      tagsChart.setOption(tagsOption)
+    }
   },
   computed: {
     ...mapState({
@@ -231,10 +363,6 @@ export default {
           padding: 0 15px;
         }
         #aboutCard {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-around;
-          align-items: center;
           .el-row {
             padding: 7px;
           }
@@ -253,12 +381,124 @@ export default {
             line-height: 1.6;
             font-size: 1.2rem;
           }
+          .mySkills, .otherSkill, .statistics {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2.25rem 0 1.5rem 0;
+            i {
+              font-size: 2rem;
+              margin: 0 5px;
+            }
+            .title {
+              font-size: 2rem;
+            }
+          }
           #aplayerCard {
+            margin: 0 auto;
             @media screen and (min-width: 750px) {
               width: 666px;
             }
             .aplayer {
               box-shadow: 0 5px 20px 0 rgba(0, 0, 0, .2), 0 10px 20px -12px rgba(0, 0, 0, .5) !important;
+            }
+          }
+          .skillbar {
+            position: relative;
+            display: block;
+            max-width: 360px;
+            margin: 15px auto;
+            background: #eee;
+            height: 30px;
+            border-radius: 35px;
+            -moz-border-radius: 35px;
+            -webkit-border-radius: 35px;
+            -webkit-transition: 0.4s linear;
+            -moz-transition: 0.4s linear;
+            -o-transition: 0.4s linear;
+            transition: 0.4s linear;
+            -webkit-transition-property: width, background-color;
+            -moz-transition-property: width, background-color;
+            -o-transition-property: width, background-color;
+            transition-property: width, background-color;
+            .skillbar-title {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 110px;
+              font-size: 0.9rem;
+              color: #ffffff;
+              border-radius: 35px;
+              -webkit-border-radius: 35px;
+              -moz-border-radius: 35px;
+              span {
+                display: block;
+                background: rgba(0, 0, 0, 0.15);
+                padding: 0 20px;
+                height: 30px;
+                line-height: 30px;
+                border-radius: 35px;
+                -webkit-border-radius: 35px;
+                -moz-border-radius: 35px;
+              }
+            }
+            .skill-bar-percent {
+              position: absolute;
+              right: 10px;
+              top: 0;
+              font-size: 12px;
+              height: 30px;
+              line-height: 30px;
+              color: #ffffff;
+              color: rgba(0, 0, 0, 0.5);
+            }
+          }
+          .tag-chips {
+              margin: 1rem auto 0.5rem;
+              max-width: 800px;
+              text-align: center;
+              .chip {
+                margin: 10px 10px;
+                padding: 19px 14px;
+                display: inline-flex;
+                line-height: 0;
+                height: 32px;
+                font-size: 1rem;
+                font-weight: 500;
+                border-radius: 5px;
+                cursor: pointer;
+                box-shadow: 0 3px 5px rgba(0, 0, 0, .12);
+                z-index: 0;
+                .tag-length {
+                  margin-left: 5px;
+                  margin-right: -2px;
+                  font-size: 0.5rem;
+                  color: #e91e63;
+                  margin-top: 1px;
+                }
+              }
+              .chip:hover {
+                color: #fff;
+                background: linear-gradient(to right, #4cbf30 0%, #0f9d58 100%) !important;
+              }
+              .chip-active {
+                color: #FFF !important;
+                background: linear-gradient(to bottom right, #FF5E3A 0%, #FF2A68 100%) !important;
+                box-shadow: 2px 5px 10px #aaa !important;
+                .tag-length {
+                  color: #FFF !important;
+                }
+              }
+            }
+          #echarts {
+            margin-top: 50px;
+            #posts-chart,
+            #categories-chart,
+            #tags-chart {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 310px;
             }
           }
         }

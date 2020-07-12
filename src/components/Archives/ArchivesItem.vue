@@ -1,5 +1,5 @@
 <template>
-  <div id="archivesItem" class="wow fadeInDown">
+  <div id="archivesItem" class="wow fadeInDown" style="animation-duration: 600ms">
     <transition name="el-fade-in-linear">
       <el-card id="normalCard" :body-style="{ padding: '0px' }">
       <el-row>

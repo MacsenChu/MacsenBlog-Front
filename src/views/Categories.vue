@@ -100,7 +100,7 @@ export default {
     },
     async getTags () {
       try {
-        const { data } = await this.$http.get('tags')
+        const { data } = await this.$http.get('tagsCloud')
         this.tags = data
         this.$nextTick(_ => {
           $('#tag-wordcloud').jQCloud(this.tags, {
