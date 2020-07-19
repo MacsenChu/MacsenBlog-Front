@@ -9,13 +9,13 @@
           <el-card id="articleDetail" class="animated fadeInDown">
               <div id="articleInfo">
                 <div id="tag">
-                  <el-tag v-for="(tag, index) in article.tag" :key="index" size="small" effect="plain">
-                    {{ tag }}
+                  <el-tag v-for="(tag, index) in article.tags" :key="index" size="small" effect="plain">
+                    {{ tag.tag }}
                   </el-tag>
                 </div>
                 <div id="categories">
                   <i class="iconfont icon-book-mark">
-                    <span>{{ article.category }}</span>
+                    <span>{{ article.category.category }}</span>
                   </i>
                 </div>
               </div>
@@ -98,29 +98,29 @@
                 </div>
               </el-card>
             </el-card>
-          <comments-card :comments="comments" :commentsCount="article.commentsCount" @submitComment="submitComment">
+          <comments-card :comments="article.comments ? article.comments : []" :commentsCount="article.commentsCount" @submitComment="submitComment">
             <template v-slot:commentsName>评论</template>
             <template v-slot:commentsCount>{{ article.commentsCount }} <span>条评论</span></template>
           </comments-card>
           <div class="otherArticle">
-            <el-card :body-style="{ padding: '0px' }" v-for="(otherArticle, index) in otherArticles" :key="otherArticle.id" data-aos="fade-up">
+            <el-card :body-style="{ padding: '0px' }" v-for="(preAndNextArticle, index) in article.preAndNextArticle" :key="preAndNextArticle.id" data-aos="fade-up">
               <el-row>
-                <router-link :to="/article/ + otherArticle.id" @click.native="$router.go(0)">
-                  <el-image :src="otherArticle.cover" fit="cover"></el-image>
+                <router-link :to="/article/ + preAndNextArticle.id" @click.native="$router.go(0)">
+                  <el-image :src="preAndNextArticle.cover" fit="cover"></el-image>
                 </router-link>
                 <el-row class="userInfo">
-                  <el-avatar :size="24" :src="otherArticle.avatar" />
-                  <span class="author">{{ otherArticle.author }}</span>
-                  <span class="date-text">{{ otherArticle.createTime | dateFormatToDate }}</span>
+                  <el-avatar :size="24" :src="preAndNextArticle.avatar" />
+                  <span class="author">{{ preAndNextArticle.author }}</span>
+                  <span class="date-text">{{ preAndNextArticle.createTime | dateFormatToDate }}</span>
                 </el-row>
-                <span class="property" v-if="otherArticle.id < article.id"><i class="iconfont icon-shangyipian"></i>上一篇</span>
-                <span class="property" v-else-if="otherArticle.id > article.id">下一篇<i class="iconfont icon-xiayipian"></i></span>
-                <span class="property" v-else-if="otherArticle.id === article.id && index === 0"><i class="iconfont icon-dangqian"></i>本篇</span>
-                <span class="property" v-else-if="otherArticle.id === article.id && index === 1">本篇<i class="iconfont icon-dangqian"></i></span>
+                <span class="property" v-if="preAndNextArticle.id < article.id"><i class="iconfont icon-shangyipian"></i>上一篇</span>
+                <span class="property" v-else-if="preAndNextArticle.id > article.id">下一篇<i class="iconfont icon-xiayipian"></i></span>
+                <span class="property" v-else-if="preAndNextArticle.id === article.id && index === 0"><i class="iconfont icon-dangqian"></i>本篇</span>
+                <span class="property" v-else-if="preAndNextArticle.id === article.id && index === 1">本篇<i class="iconfont icon-dangqian"></i></span>
               </el-row>
               <el-row>
-                <router-link :to="/article/ + otherArticle.id">
-                  <div class="title">{{ otherArticle.title }}</div>
+                <router-link :to="/article/ + preAndNextArticle.id">
+                  <div class="title">{{ preAndNextArticle.title }}</div>
                 </router-link>
               </el-row>
             </el-card>
@@ -165,10 +165,9 @@ export default {
       scrollReveal: scrollReveal(),
       article: {
         tag: '',
-        content: ''
+        content: '',
+        category: {}
       },
-      otherArticles: [],
-      comments: [],
       isCharge: false,
       urlQRCode: '',
       sticky: {
@@ -195,8 +194,13 @@ export default {
   },
   methods: {
     async getArticleById (id) {
-      const { data } = await this.$http.get(`article/${id}`)
-      this.article = data
+      const { data: res } = await this.$http.get(`article/${id}`)
+      if (res.code === 404) {
+        // 等我过一阵子写个404页面 直接编程式导航跳转过去
+      } else if (res.code !== 200) {
+        return this.$message.error(res.message)
+      }
+      this.article = res.data
       this.$nextTick(_ => {
         tocbot.init({
           tocSelector: '.js-toc',
@@ -216,8 +220,6 @@ export default {
         this.isCharge = localStorage.getItem(`article:isCharge:${this.article.id}`)
       }
       await this.qrcode()
-      await this.getComments()
-      await this.getOtherArticle()
     },
     async qrcode () {
       try {
@@ -235,27 +237,18 @@ export default {
         console.log(e)
       }
     },
-    async getComments () {
-      try {
-        const { data } = await this.$http.get('article/comment', {
-          params: {
-            articleId: this.article.id
-          }
-        })
-        this.comments = data
-      } catch (e) {
-        console.log(e)
-      }
-    },
     async charge () {
       if (this.isCharge) {
         try {
-          await this.$http.post('article/like', {
+          const { data: res } = await this.$http.post('article/like', {
             articleId: this.article.id,
             isCharge: this.isCharge
           })
+          if (res.code !== 201) {
+            return this.$message.error(res.message)
+          }
           this.isCharge = false
-          // 点完赞也没必要再获取一遍，直接修改值
+          // 点完赞也没必要再获取一遍，直接修改值(就算是想获取 我也没写获取点赞数的接口 (*^▽^*))
           this.article.likesCount--
           localStorage.removeItem(`article:isCharge:${this.article.id}`)
           this.$message.info('已取消充电！')
@@ -265,10 +258,13 @@ export default {
         }
       } else {
         try {
-          await this.$http.post('article/like', {
+          const { data: res } = await this.$http.post('article/like', {
             articleId: this.article.id,
             isCharge: this.isCharge
           })
+          if (res.code !== 201) {
+            return this.$message.error(res.message)
+          }
           this.isCharge = true
           this.article.likesCount++
           // 无登录点赞，没有好的解决方式，这里采用存到localStorage
@@ -282,19 +278,22 @@ export default {
     },
     async submitComment (userInputComment, ticket, randstr) {
       try {
-        await this.$http.post('article/comment', {
+        const { data: res } = await this.$http.post('article/comment', {
           ...userInputComment,
           ...{ articleId: this.article.id },
           ...{ systemInfo: `${dectect().browser} ${dectect().version},${dectect().os} ${dectect().osVersion}` },
           ...{ ticket },
           ...{ randstr }
         })
+        if (res.code !== 201) {
+          return this.$message.error(res.message)
+        }
         if (userInputComment.replyType === 'reply' || userInputComment.replyType === 'comment') {
           this.$message.success('回复' + userInputComment.toName + '成功！')
         } else {
           this.$message.success('留言成功!')
         }
-        // 评论数没必要特别精准（又没人数），这里不准备重新请求服务器获取评论数了，直接加1
+        // 评论数没必要特别精准（又没人数），这里不准备重新请求服务器获取评论数了，直接加1（反正我也没写接口）
         this.article.commentsCount++
         await this.getComments()
       } catch (e) {
@@ -306,14 +305,15 @@ export default {
         console.log(e)
       }
     },
-    async getOtherArticle () {
+    async getComments () {
       try {
-        const { data } = await this.$http.get('article/otherArticle', {
-          params: {
-            articleId: this.article.id
-          }
-        })
-        this.otherArticles = data
+        const { data: res } = await this.$http.get('article/comments/' + this.article.id)
+        this.comments = res.data
+        if (res.code === 200) {
+          this.article.comments = res.data
+        } else {
+          this.$message.error(res.message)
+        }
       } catch (e) {
         console.log(e)
       }

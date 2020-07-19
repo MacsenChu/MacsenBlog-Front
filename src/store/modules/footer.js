@@ -4,8 +4,8 @@ export default {
   state: {
     footerInfo: {
       id: 1,
-      visits_count: '8888',
-      visitors_count: '6666',
+      visitsCount: '8888',
+      visitorsCount: '6666',
       runtime: '2020-05-20T05:21:00',
       recordNumber: '88888888',
       recordName: 'Macsen Chu',
@@ -22,8 +22,10 @@ export default {
   actions: {
     async getFooterInfo (context) {
       try {
-        const { data } = await axios.get('footerInfo')
-        context.commit('initFooterInfo', data)
+        const { data: res } = await axios.get('footerInfo')
+        if (res.code === 200) {
+          context.commit('initFooterInfo', res.data)
+        }
       } catch (e) {
         console.log(e)
       }

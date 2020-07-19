@@ -58,8 +58,10 @@ export default {
   methods: {
     async getCarouselList () {
       try {
-        const { data } = await this.$http.get('carouselList')
-        this.carouselList = data
+        const { data: res } = await this.$http.get('carousels')
+        if (res.code === 200) {
+          this.carouselList = res.data
+        }
       } catch (e) {
         console.log(e)
       }

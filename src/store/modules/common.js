@@ -55,8 +55,10 @@ export default {
   actions: {
     async getSwiperList (context) {
       try {
-        const { data } = await axios.get('swiperList')
-        context.commit('initSwiperList', data)
+        const { data: res } = await axios.get('swipers')
+        if (res.code === 200) {
+          context.commit('initSwiperList', res.data)
+        }
       } catch (e) {
         console.log(e)
       }

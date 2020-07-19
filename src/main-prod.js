@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 // 导入filters
 import '../utils/filters'
-import './plugins/element.js'
+// import './plugins/element.js'
 // 导入全局样式表
 import './assets/css/global.css'
 // 导入字体
@@ -12,7 +12,7 @@ import './assets/fonts/iconfont.css'
 import 'jquery/dist/jquery.js'
 // 导入Materialize
 import 'materialize-css/dist/css/materialize.css'
-import 'materialize-css/dist/js/materialize.js'
+// import 'materialize-css/dist/js/materialize.js'
 // 导入VueAwesomeSwiper
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/css/swiper.css'
@@ -26,14 +26,14 @@ import infiniteScroll from 'vue-infinite-scroll'
 import VueParticles from 'vue-particles'
 // 导入 NProgress 包对应的JS和CSS
 import Nprogress from 'nprogress'
-import 'nprogress/nprogress.css'
+// import 'nprogress/nprogress.css'
 // 导入WOW.JS
-import 'wowjs/css/libs/animate.css'
+// import 'wowjs/css/libs/animate.css'
 
 // 导入axios
 import axios from 'axios'
 // 配置请求的根路径
-axios.defaults.baseURL = 'http://192.168.0.104:8001/api/'
+axios.defaults.baseURL = 'http://www.macsen.xyz:8001/api/'
 // 在 request 拦截器中，展示进度条 Nprogress.start()
 axios.interceptors.request.use(config => {
   Nprogress.start()

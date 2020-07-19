@@ -1,20 +1,28 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-cmn-Hans">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+<!--    <link rel="icon" href="<%= BASE_URL %>favicon.ico">-->
+    <link href="https://cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.0/animate.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.1/theme-chalk/index.css" rel="stylesheet">
     <title>Macsen's Blog</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue-router/3.1.6/vue-router.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.1/index.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/4.8.0/echarts.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/ityped/1.0.3/index.min.js"></script>
     <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
     <script type="text/javascript">
-      // scrollReveal在无限加载的时候 总会报一个Cannot read property 'bounds' of undefined
-      // 我看不明白，但是不影响使用，所以从“根源”上解决问题，直接屏蔽掉错误提示
-      // 开发的时候请注释掉！！
-      // function SlyarErrors() {
-      //   return true;
-      // }
-      // window.onerror = SlyarErrors;
+      function SlyarErrors() {
+        return true;
+      }
+      window.onerror = SlyarErrors;
     </script>
   </head>
   <body>

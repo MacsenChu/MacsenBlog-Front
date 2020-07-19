@@ -6,7 +6,7 @@
         <social-link color="#8e8787" placement="top"></social-link>
       </div>
       <div>
-        总访问量: {{ footerInfo.visits_count }} 次 |  总访问人数: {{ footerInfo.visitors_count }} 人
+        总访问量: {{ footerInfo.visitsCount }} 次 |  总访问人数: {{ footerInfo.visitorsCount }} 人
       </div>
       <div v-if="runtime.years === 0">
         本站已经苟延残喘运行 <br>{{ runtime.days }}天{{ runtime.hours }}小时{{ runtime.minutes }}分钟{{ runtime.seconds }}秒

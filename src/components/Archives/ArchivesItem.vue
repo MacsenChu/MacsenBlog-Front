@@ -16,12 +16,12 @@
       </el-row>
       <div class="articleDateRow">
         <span><i class="iconfont icon-calendar-minus"></i>{{ article.updateTime | dateFormatToDate }}</span>
-        <span><i class="iconfont icon-book-mark"></i>{{ article.category }}</span>
+        <span><i class="iconfont icon-book-mark"></i>{{ article.category.category }}</span>
       </div>
       <el-divider></el-divider>
       <div class="infoCount">
         <el-tag size="small" effect="plain">
-          {{ article.tag[0] }}
+          {{ article.tags[0].tag }}
         </el-tag>
         <div class="articleInFoCount">
           <router-link target="_blank" :to="/article/ + article.id">

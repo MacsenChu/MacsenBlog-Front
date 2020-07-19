@@ -139,3 +139,7 @@ h3 {
 .focusing {
     outline: none;
 }
+
+/deep/ .el-menu-item {
+    opacity: 1 !important;
+}

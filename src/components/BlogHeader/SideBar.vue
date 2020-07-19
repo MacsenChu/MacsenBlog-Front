@@ -10,6 +10,7 @@
       <el-menu
         :default-active="activeIndex"
         :text-color="headerInfo.sideBarColor"
+        @select="closeSideBar"
         router>
         <div>
           <el-avatar :size="100" :src="headerInfo.avatarUrl" />

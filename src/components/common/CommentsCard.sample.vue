@@ -156,7 +156,7 @@ export default {
       this.$refs.userInputComment.validate(valid => {
         if (valid) {
           // 自己申请腾讯验证码，下面的那串数字要改为自己的
-          const captcha = new window.TencentCaptcha('2054549093', res => {
+          const captcha = new window.TencentCaptcha('*******', res => {
             if (res.ret === 0) {
               this.$emit('submitComment', this.userInputComment, res.ticket, res.randstr)
               this.resetForm()
@@ -196,7 +196,7 @@ export default {
     replySecondLevelComment (commentId, commentName, parentId) {
       this.comments.some(_ => {
         if (_.id === parentId) {
-          _.replies.some(item => {
+          _.reply.some(item => {
             if (item.fromId === commentId) {
               this.userInputComment.toId = commentId
               this.userInputComment.toName = commentName

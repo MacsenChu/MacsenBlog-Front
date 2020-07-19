@@ -2,7 +2,7 @@
   <div id="myCard" ref="myCard">
     <el-card>
       <el-row class="avatar">
-        <el-avatar :size="160" :src="myInfo.avatarUrl" />
+        <el-avatar :size="160" :src="headerInfo.avatarUrl" />
       </el-row>
       <el-row>
         <h1>{{ myInfo.name }}</h1>
@@ -23,6 +23,7 @@
 
 <script>
 import socialLink from '../common/SocialLink'
+import { mapState } from 'vuex'
 export default {
   components: {
     socialLink
@@ -30,7 +31,6 @@ export default {
   data () {
     return {
       myInfo: {
-        avatarUrl: require('../../assets/images/avatar.jpeg'),
         name: 'Macsen Chu',
         profile: '<p>一名菜鸟coder <br>折腾在 0 和 1 世界里的青年</p>\n<p>所有晦暗留给过往，<br>但愿预见未来的你，<br>凝冬散尽，星河长明</p>\n<p>我是Macsen<br>努力成为更优秀的自己</p>'
       }
@@ -39,17 +39,22 @@ export default {
   created () {
     this.getMyInfo()
   },
-  mounted () {
-  },
   methods: {
     async getMyInfo () {
       try {
-        const { data } = await this.$http.get('myInfo')
-        this.myInfo = data
+        const { data: res } = await this.$http.get('myInfo')
+        if (res.code === 200) {
+          this.myInfo = res.data
+        }
       } catch (e) {
         console.log(e)
       }
     }
+  },
+  computed: {
+    ...mapState({
+      headerInfo: state => state.header.headerInfo
+    })
   }
 }
 </script>

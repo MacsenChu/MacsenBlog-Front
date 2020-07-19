@@ -2,7 +2,7 @@
   <div :style="colorProps" id="footer">
     <footer id="normalFooter">
       <div id="leftFootBox">
-        <div>总访问量: {{ footerInfo.visits_count }} 次 |  总访问人数: {{ footerInfo.visitors_count }} 人</div>
+        <div>总访问量: {{ footerInfo.visitsCount }} 次 |  总访问人数: {{ footerInfo.visitorsCount }} 人</div>
         <div>
           Copyright © 2020 - {{ footerInfo.copyrightYear }} {{ footerInfo.copyrightName }} | 辽ICP备{{ footerInfo.recordNumber }}号 |  {{ footerInfo.recordName }}
         </div>
@@ -19,7 +19,7 @@
     </footer>
     <footer id="mobileFooter">
       <div id="footBox">
-        <div>总访问量: {{ footerInfo.visits_count }} 次 |  总访问人数: {{ footerInfo.visitors_count }} 人</div>
+        <div>总访问量: {{ footerInfo.visitsCount }} 次 |  总访问人数: {{ footerInfo.visitorsCount }} 人</div>
         <div>
           辽ICP备{{ footerInfo.recordNumber }}号 |  {{ footerInfo.recordName }}
         </div>

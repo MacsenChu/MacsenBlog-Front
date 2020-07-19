@@ -69,8 +69,10 @@ export default {
   actions: {
     async getHeaderInfo (context) {
       try {
-        const { data } = await axios.get('headerInfo')
-        context.commit('initHeaderInfo', data)
+        const { data: res } = await axios.get('headerInfo')
+        if (res.code === 200) {
+          context.commit('initHeaderInfo', res.data)
+        }
       } catch (e) {
         console.log(e)
       }

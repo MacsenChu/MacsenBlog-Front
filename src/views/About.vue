@@ -85,13 +85,9 @@ export default {
     }
   },
   created () {
-    this.getUserInfo()
+    this.getDesc()
+    this.getAboutInfo()
     this.getMusic()
-    this.getSkills()
-    this.getOtherSkills()
-    this.getPublishStatistics()
-    this.getCategories()
-    this.getTopTags()
   },
   mounted () {
     AOS.init()
@@ -108,41 +104,47 @@ export default {
       }
       return hash
     },
-    async getUserInfo () {
+    async getDesc () {
       try {
-        const { data } = await this.$http.get('about')
-        this.desc = data
+        const { data: res } = await this.$http.get('desc')
+        if (res.code === 200) {
+          this.desc = res.data.desc
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async getAboutInfo () {
+      try {
+        const { data: res } = await this.$http.get('about')
+        if (res.code !== 200) {
+          return this.$message.error(res.message)
+        }
+        this.setSkills(res.data.skills)
+        this.otherSkills = res.data.otherSkills
+        this.setPublishStatistics(res.data.publishStatistics)
+        this.setCategories(res.data.categories)
+        this.setTopTags(res.data.topTags)
       } catch (e) {
         console.log(e)
       }
     },
     async getMusic () {
       try {
-        const { data } = await this.$http.get('music')
-        this.music = data
-        this.initAplayer()
+        const { data: res } = await this.$http.get('musics')
+        if (res.code === 200) {
+          this.music = res.data
+          this.initAplayer()
+        }
       } catch (e) {
         console.log(e)
       }
     },
-    async getSkills () {
-      try {
-        const { data } = await this.$http.get('skills')
-        data.forEach(_ => {
-          _.percent = parseInt(Math.random() * 30 + 60, 10) + '%'
-        })
-        this.skills = data
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    async getOtherSkills () {
-      try {
-        const { data } = await this.$http.get('otherSkills')
-        this.otherSkills = data
-      } catch (e) {
-        console.log(e)
-      }
+    setSkills (skills) {
+      skills.forEach(_ => {
+        _.percent = parseInt(Math.random() * 30 + 60, 10) + '%'
+      })
+      this.skills = skills
     },
     initAplayer () {
       /* eslint-disable no-new */
@@ -162,19 +164,14 @@ export default {
         audio: this.music
       })
     },
-    async getPublishStatistics () {
-      try {
-        const { data } = await this.$http.get('publishStatistics')
-        const month = []
-        const total = []
-        data.forEach(_ => {
-          month.push(_.month)
-          total.push(_.total)
-        })
-        this.initPostsChart(month, total)
-      } catch (e) {
-        console.log(e)
-      }
+    setPublishStatistics (publishStatistics) {
+      const month = []
+      const total = []
+      publishStatistics.forEach(_ => {
+        month.push(_.month)
+        total.push(_.total)
+      })
+      this.initPostsChart(month, total)
     },
     initPostsChart (month, total) {
       const postsChart = echarts.init(document.getElementById('posts-chart'))
@@ -224,20 +221,15 @@ export default {
       })
       postsChart.setOption(postsOption)
     },
-    async  getCategories () {
-      try {
-        const { data } = await this.$http.get('categories')
-        const categories = []
-        data.forEach(_ => {
-          categories.push({
-            name: _.category,
-            value: _.count
-          })
+    setCategories (c) {
+      const categories = []
+      c.forEach(_ => {
+        categories.push({
+          name: _.category,
+          value: _.count
         })
-        this.initCategoriesChart(categories)
-      } catch (e) {
-        console.log(e)
-      }
+      })
+      this.initCategoriesChart(categories)
     },
     initCategoriesChart (categories) {
       const categoriesChart = echarts.init(document.getElementById('categories-chart'))
@@ -270,11 +262,10 @@ export default {
       }
       categoriesChart.setOption(categoriesOption)
     },
-    async getTopTags () {
-      const { data } = await this.$http.get('topTags')
+    setTopTags (topTags) {
       const tagNames = []
       const tagCount = []
-      data.forEach(_ => {
+      topTags.forEach(_ => {
         tagNames.push(_.tag)
         tagCount.push(_.count)
       })

@@ -17,7 +17,7 @@
             <p class="normal-node">目前共计100篇文章~</p>
             <div
               class="bold-node"
-              v-for="(year, key, index) in archives.archives"
+              v-for="(year, key, index) in archives"
               :key="index">
               <p>{{ key }}</p>
               <div
@@ -39,7 +39,8 @@
       <el-pagination
         background
         layout="prev, pager, next"
-        :total="archives.pages * 10"
+        :total="total"
+        :page-size="limit"
         @current-change="handleCurrentChange"
         class="pagination center"
         hide-on-single-page>
@@ -58,8 +59,9 @@ export default {
   },
   data () {
     return {
-      pageNum: 1,
-      pageSize: 15,
+      limit: 15,
+      offset: 0,
+      total: 0,
       archives: {}
     }
   },
@@ -71,20 +73,24 @@ export default {
   methods: {
     async getArchives () {
       try {
-        const { data } = await this.$http('archives', {
+        const { data: res } = await this.$http('article/archives', {
           params: {
-            pageNum: this.pageNum,
-            pageSize: this.pageSize
+            limit: this.limit,
+            offset: this.offset * this.limit
           }
         })
-        this.archives = data
+        if (res.code !== 200) {
+          return this.$message.error(res.message)
+        }
+        this.total = res.data.total
+        this.archives = res.data.archives
         window.scrollTo(0, 0)
       } catch (e) {
         console.log(e)
       }
     },
     handleCurrentChange (val) {
-      this.pageNum = val
+      this.offset = val - 1
       this.getArchives()
     }
   },

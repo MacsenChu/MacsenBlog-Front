@@ -38,8 +38,11 @@ export default {
   methods: {
     async getMessage () {
       try {
-        const { data } = await this.$http.get('message')
-        this.messages = data
+        const { data: res } = await this.$http.get('message')
+        if (res.code !== 200) {
+          return this.$message.error(res.message)
+        }
+        this.messages = res.data
       } catch (e) {
         console.log(e)
       }
@@ -73,7 +76,7 @@ export default {
       let count = 0
       this.messages.forEach(message => {
         count++
-        message.reply.forEach(reply => {
+        message.replies.forEach(reply => {
           count++
         })
       })

@@ -19,7 +19,7 @@
           </div>
         </el-card>
       </div>
-      <div class="tagsCard" data-aos="fade-up" v-show="articleList.articles.length === 0">
+      <div class="tagsCard" data-aos="fade-up" v-show="articleList.length === 0">
         <el-card>
           <div class="title">
             <i class="iconfont icon-biaoqian"></i>
@@ -29,14 +29,15 @@
         </el-card>
       </div>
       <el-row class="archivesItem" v-if="articleList">
-        <el-col :lg="8" :md="12" :sm="24" v-for="(article, index) in articleList.articles" :key="index">
+        <el-col :lg="8" :md="12" :sm="24" v-for="(article, index) in articleList" :key="index">
           <archives-item :article="article" />
         </el-col>
       </el-row>
       <el-pagination
         background
         layout="prev, pager, next"
-        :total="articleList.pages * 10"
+        :total="total"
+        :page-size="limit"
         @current-change="handleCurrentChange"
         class="pagination center"
         hide-on-single-page>
@@ -63,12 +64,11 @@ export default {
       colorArr: ['#F9EBEA', '#F5EEF8', '#D5F5E3', '#E8F8F5', '#FEF9E7', '#F8F9F9', '#82E0AA', '#D7BDE2', '#A3E4D7', '#85C1E9', '#F8C471', '#F9E79F', '#FFF'],
       categories: [],
       selectCategory: 0,
-      articleList: {
-        articles: []
-      },
+      articleList: [],
       tags: [],
-      pageNum: 1,
-      pageSize: 15
+      limit: 15,
+      offset: 0,
+      total: 0
     }
   },
   created () {
@@ -92,16 +92,22 @@ export default {
     },
     async getCategories () {
       try {
-        const { data } = await this.$http.get('categories')
-        this.categories = data
+        const { data: res } = await this.$http.get('category/categories')
+        if (res.code !== 200) {
+          return this.$message.error('分类列表获取失败')
+        }
+        this.categories = res.data
       } catch (e) {
         console.log(e)
       }
     },
     async getTags () {
       try {
-        const { data } = await this.$http.get('tagsCloud')
-        this.tags = data
+        const { data: res } = await this.$http.get('tag/tagsCloud')
+        if (res.code !== 200) {
+          return this.$message.error(res.message)
+        }
+        this.tags = res.data
         this.$nextTick(_ => {
           $('#tag-wordcloud').jQCloud(this.tags, {
             autoResize: true,
@@ -114,26 +120,29 @@ export default {
     },
     async getArticleByCategories () {
       try {
-        const { data } = await this.$http.get('article/category', {
+        const { data: res } = await this.$http.get('article/category', {
           params: {
             categoryId: this.selectCategory,
-            pageNum: this.pageNum,
-            pageSize: this.pageSize
+            limit: this.limit,
+            offset: this.offset * this.limit
           }
         })
-        this.articleList = data
+        if (res.code !== 200) {
+          this.$message.error(res.message)
+        }
+        this.total = res.data.total
+        this.articleList = res.data.list
       } catch (e) {
         console.log(e)
       }
     },
     handleSelectCategory (categoryId) {
-      this.pageNum = 1
-      this.pageSize = 15
+      this.offset = 0
       this.selectCategory = categoryId
       this.getArticleByCategories()
     },
     handleCurrentChange (val) {
-      this.pageNum = val
+      this.offset = val - 1
       this.getArticleByCategories()
     }
   },

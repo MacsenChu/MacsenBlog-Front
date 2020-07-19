@@ -66,12 +66,12 @@
       </el-row>
       <div class="articleDateRow">
         <span><i class="iconfont icon-calendar-minus"></i>{{ article.updateTime | dateFormatToDate }}</span>
-        <span><i class="iconfont icon-book-mark"></i>{{ article.category }}</span>
+        <span><i class="iconfont icon-book-mark"></i>{{ article.category.category }}</span>
       </div>
       <el-divider></el-divider>
       <div class="infoCount">
         <el-tag size="small" effect="plain">
-          {{ article.tag[0] }}
+          {{ article.tags[0].tag }}
         </el-tag>
         <div class="articleInFoCount">
           <router-link target="_blank" :to="/article/ + article.id">
@@ -92,7 +92,7 @@
 <script>
 import scrollReveal from 'scrollreveal'
 export default {
-  props: ['article'],
+  props: ['article', 'delay'],
   data () {
     return {
       scrollReveal: scrollReveal()
@@ -101,9 +101,9 @@ export default {
   mounted () {
     this.scrollReveal.reveal('.reveal-fadeInLeft', {
       // 动画的时长
-      duration: 350,
+      duration: 300,
       // 延迟时间
-      delay: 200,
+      delay: this.delay,
       // 动画开始的位置，'bottom', 'left', 'top', 'right'
       origin: 'left',
       // 回滚的时候是否再次触发动画

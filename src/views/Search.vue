@@ -29,11 +29,12 @@
       <div id="main" v-if="articles.articleList.length > 0">
         <el-row>
           <el-col :lg="18" :md="18">
-            <item-card v-for="article in articles.articleList" :key="article.id" :article="article"></item-card>
+            <item-card v-for="article in articles.articleList" :key="article.id" :article="article" :delay="0"></item-card>
             <el-pagination
               background
               layout="prev, pager, next"
-              :total="articles.pages * 10"
+              :total="total"
+              :page-size="limit"
               @current-change="handleCurrentChange"
               class="pagination center"
               hide-on-single-page>
@@ -93,8 +94,9 @@ export default {
       },
       loading: false,
       screenHeight: document.documentElement.clientHeight,
-      pageNum: 1,
-      pageSize: 10,
+      limit: 10,
+      offset: 0,
+      total: 0,
       sticky: {
         stickyTop: 75,
         disabled: false
@@ -129,17 +131,18 @@ export default {
         return
       }
       try {
-        const { data } = await this.$http.get('search', {
+        const { data: res } = await this.$http.get('search', {
           params: {
             keyword: this.keyword,
-            pageNum: this.pageNum,
-            pageSize: this.pageSize
+            limit: this.limit,
+            offset: this.offset * this.limit
           }
         })
-        if (data.articleList.length === 0) {
-          this.$message.info('没有找到该文章')
-        } else {
-          this.articles = data
+        if (res.code === 404) {
+          return this.$message.info('没有找到该文章')
+        } else if (res.code === 200) {
+          this.total = res.data.total
+          this.articles = res.data
           this.setStickTop()
         }
       } catch (e) {
@@ -148,8 +151,11 @@ export default {
     },
     async getTags () {
       try {
-        const { data } = await this.$http.get('tags')
-        this.tags = data
+        const { data: res } = await this.$http.get('tag/tags')
+        if (res.code !== 200) {
+          return this.$message.error(res.message)
+        }
+        this.tags = res.data
       } catch (e) {
         console.log(e)
       }

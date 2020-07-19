@@ -76,8 +76,10 @@ export default {
   },
   methods: {
     async getSocialLink () {
-      const { data } = await this.$http.get('socialLink')
-      this.socialLink = data
+      const { data: res } = await this.$http.get('socialLink')
+      if (res.code === 200) {
+        this.socialLink = res.data
+      }
     }
   },
   computed: {

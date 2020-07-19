@@ -41,13 +41,13 @@
         <!-- infinite-scroll-disabled false是执行loadMore，true是不执行 -->
       <el-row>
         <el-col v-if="articleList.length > 0" :lg="18" :md="18" v-infinite-scroll="loadMore" infinite-scroll-disabled="infinite_scroll_disabled" infinite-scroll-distance="0">
-          <item-card v-for="article in articleList" :key="article.id" :article="article"></item-card>
+          <item-card v-for="article in articleList" :key="article.id" :article="article" :delay="200"></item-card>
           <loading-card :loading="!loading"></loading-card>
         </el-col>
-        <!-- 这两个元素都用scrollreveal总是有那么些问题 这里选择了又引入了wow.js, 我技术太差了，这个项目的优化空间非常大 -->
+        <!-- 这两个元素都用scrollreveal总是有那么些问题 这里选择了又引入了wow.js, 我功力不够，这个项目的优化空间非常大 -->
         <el-col :lg="6" :md="6" class="hidden-sm-and-down sideCard">
           <!-- vue-sticky 让侧边这几个子元素滚动到一定的位置定住，左边无限滚动 -->
-          <div v-sticky="sticky" ref="asideStick" id="asideStick" class="wow bounceInRight">
+          <div v-sticky="sticky" ref="asideStick" id="asideStick" class="wow bounceInRight" style="animation-delay: 0s; animation-duration: 750ms;">
              <my-card></my-card>
              <carousel-card></carousel-card>
              <footer-card></footer-card>
@@ -114,7 +114,8 @@ export default {
         author: 'Macsen',
         avatar: require('../assets/images/avatar.jpeg'),
         createTime: new Date(),
-        tag: '',
+        tags: [{}],
+        category: {},
         likesCount: 0,
         commentsCount: 0
       }],
@@ -151,14 +152,18 @@ export default {
   methods: {
     async getArticleList (offset) {
       try {
-        const { data } = await this.$http.get('articleList', {
+        const { data: res } = await this.$http.get('article', {
           params: {
             limit: this.limit,
             offset: offset * this.limit
           }
         })
-        this.articleList.length = 0
-        this.articleList.push.apply(this.articleList, data)
+        if (res.code === 200) {
+          this.articleList.length = 0
+          this.articleList.push.apply(this.articleList, res.data)
+        } else {
+          return this.$message.error(res.message)
+        }
       } catch (e) {
         console.log(e)
       }
@@ -175,14 +180,14 @@ export default {
     async loadMore () {
       this.loading = true
       try {
-        const { data } = await this.$http.get('articleList', {
+        const { data: res } = await this.$http.get('article', {
           params: {
             limit: this.limit,
             offset: ++this.offset * this.limit
           }
         })
-        if (data.length !== 0) {
-          this.articleList.push.apply(this.articleList, data)
+        if (res.code === 200) {
+          this.articleList.push.apply(this.articleList, res.data)
           this.loading = false
         } else {
           this.loading = true
@@ -193,9 +198,11 @@ export default {
     },
     async getMusic () {
       try {
-        const { data } = await this.$http.get('music')
-        this.music = data
-        this.initAplayer()
+        const { data: res } = await this.$http.get('musics')
+        if (res.code === 200) {
+          this.music = res.data
+          this.initAplayer()
+        }
       } catch (e) {
         console.log(e)
       }
