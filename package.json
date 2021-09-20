@@ -22,7 +22,7 @@
     "less-loader": "^6.1.0",
     "materialize-css": "^1.0.0",
     "nprogress": "^0.2.0",
-    "prismjs": "^1.20.0",
+    "prismjs": "^1.25.0",
     "qrcode": "^1.4.4",
     "scrollreveal": "^4.0.6",
     "swiper": "^5.4.3",
